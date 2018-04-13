@@ -1,6 +1,21 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import './styles/index.css';
-import App from './components/app/App';
+import { render } from 'react-dom';
+import { Provider } from 'react-redux';
+import { BrowserRouter as Router } from 'react-router-dom';
+import configureStore from './store/configureStore';
+import routes from './routes';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+import 'antd/dist/antd.css';
+import './styles/bootstrap.min.css';
+import './styles/index.css';
+
+const store = configureStore();
+
+render(
+    <Provider store={store}>
+        <Router>
+            {routes}
+        </Router>
+    </Provider>,
+    document.getElementById('root')
+);

@@ -7,7 +7,7 @@ const urlencodedParser = bodyParser.urlencoded({limit: '50mb', extended: true});
 
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://Spital:Topaz123_@ds131989.mlab.com:31989/sound-around-db', { useMongoClient: true });
+mongoose.connect('mongodb://admin:Topaz123_@ds131989.mlab.com:31989/sound-around-db', { useMongoClient: true });
 
 const app = new Express();
 const port = 3001;
@@ -17,7 +17,7 @@ app.use(jsonParser);
 app.use(urlencodedParser);
 
 app.get('/*', (req, res) => {
-    res.sendFile(__dirname + '/build/index.html');
+    res.sendFile(__dirname + '/public/index.html');
 });
 
 app.listen(port, error => {
