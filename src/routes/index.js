@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, Route } from 'react-router';
+import { Switch, Route, Redirect } from 'react-router';
 
 import App from '../components/app/App';
 import CurrentRoomPage from '../components/current-room-page/CurrentRoomPage';
@@ -12,18 +12,26 @@ import SettingsPage from '../components/settings-page/SettingsPage';
 import RegisterPage from '../components/register-page/RegisterPage';
 import LoginPage from '../components/login-page/LoginPage';
 
+import NotFoundPage from '../components/shared/NotFoundPage';
+
+const AppWrapper = () => (
+    <App>
+        <Route path='/music' component={MusicPage} />
+        <Route exact path='/playlists' component={PlaylistsPage} />
+        <Route path='/playlists/:playlistId' component={PlaylistPage} />
+        <Route exact path='/rooms' component={RoomsPage} />
+        <Route path='/rooms/:roomId' component={CurrentRoomPage} />
+        <Route path='/settings' component={SettingsPage} />
+    </App>
+);
+
 const routes = (
     <Switch>
-        <Route path='/register' component={RegisterPage} />
-        <Route path='/login' component={LoginPage} />
-        <App>
-            <Route path='/music' component={MusicPage} />
-            <Route exact path='/playlists' component={PlaylistsPage} />
-            <Route path='/playlists/:playlistId' component={PlaylistPage} />
-            <Route exact path='/rooms' component={RoomsPage} />
-            <Route path='/rooms/:roomId' component={CurrentRoomPage} />
-            <Route path='/settings' component={SettingsPage} />
-        </App>
+        <Route exact path='/register' component={RegisterPage} />
+        <Route exact path='/login' component={LoginPage} />
+        <Route path='/(music|playlists|rooms|settings)' component={AppWrapper} />
+        <Route exact path='/' render={() => <Redirect to='/rooms' />} />
+        <Route component={NotFoundPage} />
     </Switch>
 );
 
