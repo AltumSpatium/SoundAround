@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Form, Input, Button } from 'antd';
 
+import '../../styles/AuthPanel.css';
+
 class AuthPanel extends Component {
     constructor(props) {
         super(props);
