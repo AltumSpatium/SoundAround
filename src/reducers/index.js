@@ -1,6 +1,12 @@
 import { combineReducers } from 'redux';
 import { routerReducer } from 'react-router-redux';
+import { reducer as toastrReducer } from 'react-redux-toastr';
+import auth from './auth';
+import user from './user';
 
 export default combineReducers({
-    routing: routerReducer
+    auth,
+    user,
+    routing: routerReducer,
+    toastr: toastrReducer
 });

@@ -1,0 +1,50 @@
+import {
+    LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAIL,
+    REGISTER_REQUEST, REGISTER_SUCCESS, REGISTER_FAIL,
+    LOGOUT
+} from '../constants/auth';
+import {
+    request, success, fail, callAPI
+} from './default';
+
+const createParams = body => ({
+    headers: {
+        'Content-type': 'application/json; charset=UTF-8'
+    },
+    method: 'POST',
+    body: JSON.stringify(body)
+});
+
+const fetchAuth = (url, userData, requestAction, successAction, failAction) => {
+    return callAPI({
+        url,
+        params: createParams(userData),
+        requestAction,
+        successAction,
+        failAction
+    });
+}
+
+const loginRequest = request(LOGIN_REQUEST);
+const loginSuccess = success(LOGIN_SUCCESS)
+const loginFail = fail(LOGIN_FAIL);
+
+const registerRequest = request(REGISTER_REQUEST);
+const registerSuccess = success(REGISTER_SUCCESS)
+const registerFail = fail(REGISTER_FAIL);
+
+const logoutRequest = request(LOGOUT);
+
+export const login = (url, userData) =>
+    fetchAuth(url, userData, loginRequest, loginSuccess, loginFail);
+
+export const register = (url, userData) =>
+    fetchAuth(url, userData, registerRequest, registerSuccess, registerFail);
+
+export const logout = () => dispatch => {
+    return new Promise((resolve, reject) => {
+        localStorage.removeItem('sa_token');
+        dispatch(logoutRequest());
+        resolve();
+    });
+};
