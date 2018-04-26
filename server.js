@@ -9,12 +9,17 @@ const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://admin:Topaz123_@ds131989.mlab.com:31989/sound-around-db', { useMongoClient: true });
 
+const { signup, login } = require('./src/app/routes/user');
+
 const app = new Express();
 const port = 3001;
 
 app.use(Express.static(__dirname));
 app.use(jsonParser);
 app.use(urlencodedParser);
+
+app.post('/api/auth/login', login);
+app.post('/api/auth/signup', signup);
 
 app.get('/*', (req, res) => {
     res.sendFile(__dirname + '/public/index.html');

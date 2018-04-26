@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import AuthPanel from '../auth/AuthPanel';
+import { login } from '../../actions/auth';
 
 import '../../styles/LoginPage.css';
 
@@ -23,7 +24,9 @@ class LoginPage extends Component {
     }
 
     onSubmit() {
-
+        this.props.login(this.state).then(error => {
+            if (!error) this.props.history.push('/');
+        });
     }
 
     render() {
@@ -37,10 +40,18 @@ class LoginPage extends Component {
                     headerContent='Login' submitText='Login'
                     footerContent={<span>Don't have an account? <Link to='/register'>Sign Up</Link></span>}
                     onChange={this.onChange} onSubmit={this.onSubmit}
-                    options={options} />
+                    options={options} isFetching={this.props.isFetching} />
             </div>
         );
     }
 }
 
-export default LoginPage;
+const mapStateToProps = state => ({
+    isFetching: state.auth.isFetching
+});
+
+const mapDispatchToProps = dispatch => ({
+    login: userData => dispatch(login('/api/auth/login', userData))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(LoginPage);

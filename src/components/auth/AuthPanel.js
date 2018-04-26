@@ -9,6 +9,7 @@ class AuthPanel extends Component {
 
         this.createForm = this.createForm.bind(this);
         this.processField = this.processField.bind(this);
+        this.onSubmit = this.onSubmit.bind(this);
     }
 
     createForm(fieldNames, confirmPassword) {
@@ -70,7 +71,7 @@ class AuthPanel extends Component {
                 placeholder = 'Enter email...';
                 config = {
                     rules: [
-                        { required: true, message: 'Please, enter email!' },
+                        // { required: true, message: 'Please, enter email!' },
                         { 
                             pattern: /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
                             message: 'Please, enter a valid email address!' 
@@ -95,7 +96,7 @@ class AuthPanel extends Component {
                 config = {
                     rules: [
                         { required: true, message: 'Please, enter password!' },
-                        { min: 6, message: 'Passwords length must be above 6 symbols!' }
+                        { min: 8, message: 'Passwords length must be above 8 symbols!' }
                     ]
                 };
                 break;
@@ -109,20 +110,42 @@ class AuthPanel extends Component {
         };
     }
 
+    onSubmit() {
+        const { form, options: { fields, confirmPassword } } = this.props;
+
+        form.validateFields(
+            confirmPassword ? fields.concat(['confirmPassword']) : fields, {},
+            (errors, values) => {
+                if (!errors) {
+                    this.props.onSubmit();
+            }
+        });
+    }
+
     render() {
         const {
-            headerContent, footerContent, submitText,
+            headerContent, footerContent, submitText, isFetching,
             options: { fields, confirmPassword }, onSubmit
         } = this.props;
+
+        const onKeyDown = e => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                this.onSubmit();
+            }
+        };
 
         return (
             <div className="auth-panel">
                 <h3 className="auth-panel__header">{headerContent}</h3>
                     <div className="auth-panel__main">
-                        <Form onSubmit={onSubmit}>
+                        <Form onSubmit={onSubmit} onKeyDown={onKeyDown}>
                             {this.createForm(fields, confirmPassword)}
                             <Form.Item>
-                                <Button type='submit' onClick={onSubmit}>{submitText}</Button>
+                                <Button
+                                    type='submit' onClick={this.onSubmit} loading={isFetching}>
+                                    {submitText}
+                                </Button>
                             </Form.Item>
                         </Form>
                 </div>

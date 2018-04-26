@@ -2,6 +2,7 @@ import React from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
 import { BrowserRouter as Router } from 'react-router-dom';
+import ReduxToastr from 'react-redux-toastr';
 import configureStore from './store/configureStore';
 import routes from './routes';
 
@@ -13,9 +14,18 @@ const store = configureStore();
 
 render(
     <Provider store={store}>
-        <Router>
-            {routes}
-        </Router>
+        <div>
+            <Router>
+                {routes}
+            </Router>
+
+            <ReduxToastr
+                timeOut={4000}
+                newestOnTop={false}
+                transitionIn='fadeIn'
+                transitionOut='fadeOut'
+                progressBar />
+        </div>
     </Provider>,
     document.getElementById('root')
 );

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Switch, Route, Redirect } from 'react-router';
+import Authorization from '../components/auth/Authorization';
 
 import App from '../components/app/App';
 import CurrentRoomPage from '../components/current-room-page/CurrentRoomPage';
@@ -14,6 +15,9 @@ import LoginPage from '../components/login-page/LoginPage';
 
 import NotFoundPage from '../components/shared/NotFoundPage';
 
+const GuestRole = Authorization(['guest']);
+const UserRole = Authorization(['user']);
+
 const AppWrapper = () => (
     <App>
         <Route path='/music' component={MusicPage} />
@@ -27,9 +31,9 @@ const AppWrapper = () => (
 
 const routes = (
     <Switch>
-        <Route exact path='/register' component={RegisterPage} />
-        <Route exact path='/login' component={LoginPage} />
-        <Route path='/(music|playlists|rooms|settings)' component={AppWrapper} />
+        <Route exact path='/register' component={GuestRole(RegisterPage)} />
+        <Route exact path='/login' component={GuestRole(LoginPage)} />
+        <Route path='/(music|playlists|rooms|settings)' component={UserRole(AppWrapper)} />
         <Route exact path='/' render={() => <Redirect to='/rooms' />} />
         <Route component={NotFoundPage} />
     </Switch>

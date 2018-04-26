@@ -19,7 +19,12 @@
 
 .auth-panel__main .ant-row {
     margin: 0 !important;
-}                                                     
+}
+
+.auth-panel__main .ant-input::placeholder,
+.auth-panel__main .ant-input::-webkit-input-placeholder {
+    color: grey;
+}
 
 .auth-panel__main .ant-input {
     border-radius: 0px !important;
@@ -57,7 +62,6 @@
     font-size: 18px;
 }
 
-.auth-panel__main .ant-btn:active,
 .auth-panel__main .ant-btn:focus {
     background-color: #1565C0;
     color: white;
@@ -66,6 +70,10 @@
 .auth-panel__main .ant-btn:hover {
     color: white;
     background-color: #1565C0;
+}
+
+.auth-panel__main .ant-btn:active {
+    background-color: #0D47A1;
 }
 
 .auth-panel__footer {
@@ -80,4 +88,42 @@
 
 .auth-panel__footer a:hover {
     color: white;
+}
+
+.auth-panel__main .has-error .ant-input {
+    background-color: #FFCDD2;
+}
+
+.auth-panel__main .has-error .ant-input:hover {
+    background-color: #FCC2C8;
+}
+
+.auth-panel__main .has-error .ant-input:focus {
+    background-color: #FFBCC3;
+}
+
+.auth-panel__main .has-error .ant-form-explain {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 100%;
+    margin-left: 6px;
+    background-color: white;
+    width: fit-content;
+    padding: 3px;
+    border-radius: 5px;
+}
+
+.auth-panel__main .has-error .ant-form-explain:after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 0;
+    height: 0;
+    border: 6px solid transparent;
+    border-right-color: white;
+    border-left: 0;
+    margin-top: -6px;
+    margin-left: -6px;
 }
