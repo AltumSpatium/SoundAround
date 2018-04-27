@@ -12,9 +12,9 @@ mongoose.connect('mongodb://admin:Topaz123_@ds131989.mlab.com:31989/sound-around
 const { signup, login } = require('./src/app/routes/user');
 
 const app = new Express();
-const port = 3001;
+const port = process.env.PORT || 8000;
 
-app.use(Express.static(__dirname));
+app.use(Express.static(path.join(__dirname, '/build')));
 app.use(jsonParser);
 app.use(urlencodedParser);
 
@@ -22,7 +22,7 @@ app.post('/api/auth/login', login);
 app.post('/api/auth/signup', signup);
 
 app.get('/*', (req, res) => {
-    res.sendFile(__dirname + '/public/index.html');
+    res.sendFile(path.join(__dirname, '/build/index.html'));
 });
 
 app.listen(port, error => {
