@@ -18,7 +18,8 @@ export const callAPI = ({url, params, requestAction, successAction, failAction})
                     case 409:
                         throw json;
                     default:
-                        throw { message: 'An error occured' };
+                        const defaultError = { message: 'An error occured' };
+                        throw defaultError;
                 }
             })
             .then(json => {

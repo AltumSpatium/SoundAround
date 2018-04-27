@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
+import LoadingBar from 'react-redux-loading-bar';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { logout } from '../../actions/auth';
 
@@ -25,7 +27,13 @@ class App extends Component {
     render() {
         return (
             <div className="app">
-                Appbar <button onClick={this.onLogoutClick}>Logout</button>
+                <header>
+                    <LoadingBar style={{ height: '2px', backgroundColor: 'red' }} />
+                    Appbar <button onClick={this.onLogoutClick}>Logout</button>
+                    <div>
+                        <Link to='/music'>Music</Link> | <Link to='/rooms'>Rooms</Link> | <Link to='/playlists'>Playlists</Link>
+                    </div>
+                </header>
 
                 {this.props.children}
             </div>
