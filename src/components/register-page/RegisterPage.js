@@ -53,7 +53,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-    register: userData => dispatch(register('/api/auth/signup', userData))
+    register: userData => dispatch(register(userData))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(RegisterPage);

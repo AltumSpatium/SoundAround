@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+
 import '../../styles/PlaylistPage.css';
 
 class PlaylistPage extends Component {
@@ -6,6 +7,7 @@ class PlaylistPage extends Component {
         return (
             <div className="playlist-page">
                 Hello from PlaylistPage component
+
             </div>
         );
     }

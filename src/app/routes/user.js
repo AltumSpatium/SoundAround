@@ -10,6 +10,8 @@ const createToken = username => {
     return jwt.sign(payload, 'TOPAZ123');
 };
 
+const decodeToken = token => jwt.decode(token);
+
 const validate = (str, re) => !!str.match(re);
 
 const signup = async (req, res) => {
@@ -31,7 +33,7 @@ const signup = async (req, res) => {
     const user = new User({ ...req.body });
     user.save((err, savedUser) => {
         if (err) res.send(err);
-        res.json({ token: createToken(savedUser.username) });
+        else res.json({ token: createToken(savedUser.username) });
     });
 };
 
@@ -54,10 +56,29 @@ const login = async (req, res) => {
     });
 };
 
-const verifyAuth = () => {
+const verifyUser = (req, res, next) => {
+    const token = req.headers['x-access-token'];
+    const payload = decodeToken(token);
+    if (req.params.username !== payload.sub) {
+        return res.status(403).json({ message: 'Not authorized for this action' });
+    } else next();
+};
 
-}
+const verifyAuth = (req, res, next) => {
+    const token = req.headers['x-access-token'];
+    if (token) {
+        jwt.verify(token, 'TOPAZ123', function(err, payload) {
+            if (err) {
+                return res.status(403).send({ message: 'Failed to authenticate token' });
+            } else {
+                next();
+            }
+        });
+    } else {
+        return res.status(403).send({ message: 'No token provided' });
+    }
+};
 
 module.exports = {
-    signup, login, verifyAuth
+    signup, login, verifyAuth, verifyUser, decodeToken
 };
