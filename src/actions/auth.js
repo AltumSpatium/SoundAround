@@ -41,10 +41,7 @@ export const login = userData =>
 export const register = userData =>
     fetchAuth('/api/auth/signup', userData, registerRequest, registerSuccess, registerFail);
 
-export const logout = () => dispatch => {
-    return new Promise((resolve, reject) => {
-        localStorage.removeItem('sa_token');
-        dispatch(logoutRequest());
-        resolve();
-    });
+export const logout = () => async dispatch => {
+    localStorage.removeItem('sa_token');
+    dispatch(logoutRequest());
 };
