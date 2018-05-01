@@ -35,11 +35,11 @@ const registerFail = fail(REGISTER_FAIL);
 
 const logoutRequest = request(LOGOUT);
 
-export const login = (url, userData) =>
-    fetchAuth(url, userData, loginRequest, loginSuccess, loginFail);
+export const login = userData =>
+    fetchAuth('/api/auth/login', userData, loginRequest, loginSuccess, loginFail);
 
-export const register = (url, userData) =>
-    fetchAuth(url, userData, registerRequest, registerSuccess, registerFail);
+export const register = userData =>
+    fetchAuth('/api/auth/signup', userData, registerRequest, registerSuccess, registerFail);
 
 export const logout = () => dispatch => {
     return new Promise((resolve, reject) => {

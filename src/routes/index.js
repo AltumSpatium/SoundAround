@@ -1,7 +1,7 @@
 import React from 'react';
 import { Switch, Route, Redirect } from 'react-router';
 import Authorization from '../components/auth/Authorization';
-import mountLoadingBar from '../hocs/mountLoadingBar';
+import WithLoadingBar from '../hocs/WithLoadingBar';
 
 import App from '../components/app/App';
 import CurrentRoomPage from '../components/current-room-page/CurrentRoomPage';
@@ -19,16 +19,20 @@ import NotFoundPage from '../components/shared/NotFoundPage';
 const GuestRole = Authorization(['guest']);
 const UserRole = Authorization(['user']);
 
-const AppWrapper = mountLoadingBar(
-    <App>
-        <Route path='/music' component={MusicPage} />
-        <Route exact path='/playlists' component={PlaylistsPage} />
-        <Route path='/playlists/:playlistId' component={PlaylistPage} />
-        <Route exact path='/rooms' component={RoomsPage} />
-        <Route path='/rooms/:roomId' component={CurrentRoomPage} />
-        <Route path='/settings' component={SettingsPage} />
-    </App>
+const AppWrapper = () => (
+    <WithLoadingBar>
+        <App>
+            <Route path='/music' component={MusicPage} />
+            <Route exact path='/playlists' component={PlaylistsPage} />
+            <Route path='/playlists/:playlistId' component={PlaylistPage} />
+            <Route exact path='/rooms' component={RoomsPage} />
+            <Route path='/rooms/:roomId' component={CurrentRoomPage} />
+            <Route path='/settings' component={SettingsPage} />
+        </App>
+    </WithLoadingBar>
 );
+
+
 
 const routes = (
     <Switch>

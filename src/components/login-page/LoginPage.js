@@ -51,7 +51,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-    login: userData => dispatch(login('/api/auth/login', userData))
+    login: userData => dispatch(login(userData))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(LoginPage);
