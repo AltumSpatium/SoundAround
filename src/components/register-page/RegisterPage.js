@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import AuthPanel from '../auth/AuthPanel';
 import { register } from '../../actions/auth';
+import { authenticate } from '../../util/authenticate';
 
 import '../../styles/RegisterPage.css';
 
@@ -26,7 +27,9 @@ class RegisterPage extends Component {
 
     onSubmit() {
         this.props.register(this.state).then(error => {
-            if (!error) this.props.history.push('/');
+            if (!error) {
+                this.props.getUser().then(() => this.props.history.push('/'));
+            }
         });
     }
 
@@ -53,7 +56,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-    register: userData => dispatch(register(userData))
+    register: userData => dispatch(register(userData)),
+    getUser: () => dispatch(authenticate())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(RegisterPage);

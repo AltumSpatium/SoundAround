@@ -21,7 +21,7 @@ const signup = async (req, res) => {
     }
 
     //const userByEmail = User.findOne({ email: req.body.email });
-    const userByUsername = User.findOne({ username: req.body.username });
+    const userByUsername = User.findOne({ username });
     
     //if (await userByEmail !== null) {
     //    return res.status(409).json({ message: 'Email is already taken' });
@@ -43,7 +43,7 @@ const login = async (req, res) => {
         return res.status(400).json({ message: 'Username/password is incorrect' });
     }
 
-    const user = await User.findOne({ username: username });
+    const user = await User.findOne({ username });
     if (!user) {
         return res.status(401).json({ message: 'Invalid username/password' });
     }

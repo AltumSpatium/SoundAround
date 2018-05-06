@@ -1,0 +1,185 @@
+.music-page {
+}
+
+.music-page__controls-panel {
+    padding: 5px;
+    border: 1px solid lightgrey;
+    border-radius: 5px;
+    width: fit-content
+}
+
+.music-page__controls-panel > div {
+    margin-top: 5px;
+    width: 120px;
+}
+
+.music-page__controls-panel > button,
+.music-page__controls-panel .ant-select-selection {
+    width: 120px;
+    background-color: #448AFF;
+    color: white;
+    border-color: #448AFF; 
+}
+
+.music-page__controls-panel > button:focus,
+.music-page__controls-panel .ant-select-selection:focus {
+    background-color: #1976D2;
+    color: white;
+    border-color: #1976D2;
+    outline-color: #1976D2;
+}
+
+.music-page__controls-panel > button:hover,
+.music-page__controls-panel .ant-select-selection:hover {
+    background-color: #1976D2;
+    color: white;
+    border-color: #1976D2;
+    outline-color: #1976D2;
+}
+
+.music-page__controls-panel .ant-select-disabled > div {
+    background-color: #BBDEFB !important;
+    border-color: #BBDEFB !important;
+    cursor: pointer;
+}
+
+.music-page__controls-panel > div > span {
+    font-size: 13px;
+}
+
+.row {
+    width: 100%;
+}
+
+.loading-container {
+    text-align: center;
+    width: 100%;
+}
+
+.track-item {
+    padding: 4px;
+    cursor: pointer;
+    width: 100%;
+    position: relative;
+    transition: 0.2s ease;
+    border-radius: 4px;
+    z-index: 4;
+}
+
+.track-item:hover {
+    background-color: rgb(25, 118, 210, 0.3);
+    transition: 0.2s ease;
+}
+
+/* .track-item:active {
+    background-color: rgb(25, 118, 210, 0.4);
+    transition: 0.2s ease;   
+} */
+
+.default-album-cover {
+    width: 60px;
+    height: 60px;
+    border: 1px solid rgb(25, 118, 210);
+    border-radius: 4px;
+    color: rgb(25, 118, 210);
+    font-size: 33px;
+    text-align: center;
+}
+
+.track-item > div:first-child {
+    float: left;
+}
+
+.track-item__picture {
+    width: 60px;
+    height: 60px;
+}
+
+.track-item__picture img {
+    width: 60px;
+    height: 60px;
+    border-radius: 4px;
+}
+
+.track-item__info {
+    margin-left: 65px;
+    height: 100%;
+    position: relative;
+}
+
+.track-item__info > div {
+    margin: 0 !important;
+    padding: 0 !important;
+    position: absolute;
+}
+
+.track-item__info-title {
+    color: black;
+    font-size: 17px;
+    top: 2px;
+    left: 2px;
+    max-width: 350px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.track-item__info-album {
+    display: none;
+}
+
+.track-item__info-artist {
+    left: 2px;
+    bottom: 5px;
+    font-size: 15px;
+    max-width: 350px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.track-item__info-duration {
+    right: 10px;
+    top: 50%;
+}
+
+.track-item__info-duration span {
+    font-family: 'Roboto' !important;
+}
+
+.track-item__controls {
+    position: absolute;
+    top: 0;
+    right: 50px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.track-item__controls button {
+    background: rgb(25, 118, 210, 0.4);
+    color: white;
+    border: none;
+    margin: 0 2px;
+    font-size: 16px;
+    width: 30px;
+    height: 30px;
+    border-radius: 12px;
+    transition: 0.2s ease;
+    opacity: 0;
+    z-index: 5;
+}
+
+.track-item__controls button:hover {
+    background-color: rgb(25, 118, 210, 0.7);
+    transition: 0.2s ease;
+}
+
+.track-item:hover .track-item__controls button {
+    opacity: 1;
+    transition: 0.2s ease;
+}
+
+.track-item:hover .track-item__controls button:active {
+    background-color: rgb(25, 118, 210, 0.9);
+    transition: 0.2s ease;
+}

@@ -13,7 +13,8 @@ const trackSchema = new mongoose.Schema({
         format: String,
         data: Buffer
     },
-    lyrics: String
+    lyrics: String,
+    uploadDate: Date
 });
 
 module.exports = mongoose.model('Track', trackSchema);

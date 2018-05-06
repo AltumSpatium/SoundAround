@@ -1,5 +1,6 @@
 /* @import url('https://fonts.googleapis.com/css?family=Do+Hyeon'); */
 /* @import url('https://fonts.googleapis.com/css?family=Dosis'); */
+@import url('https://fonts.googleapis.com/css?family=Roboto');
 @import url('https://fonts.googleapis.com/css?family=Raleway');
 
 * {
@@ -8,4 +9,8 @@
   /* font-family: 'Do Hyeon', sans-serif !important; */
   /* font-family: 'Dosis', sans-serif !important; */
   font-family: 'Raleway', sans-serif !important;
+}
+
+body {
+    min-width: 1280px;
 }
