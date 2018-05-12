@@ -36,15 +36,16 @@ const saveAudio = (filePath, user) => {
                 title, album, artist,
                 picture: albumCover,
                 lyrics: null,
-                uploadDate: new Date()
+                uploadDate: new Date(),
+                usersLinks: 1
             });
-            await track.save();
+            track.save();
 
-            user.tracks.push(file._id);
-            await User.findOneAndUpdate({ username: user.username }, { tracks: user.tracks }, {});
+            user.tracks.push(track._id);
+            User.findOneAndUpdate({ username: user.username }, { tracks: user.tracks }, {}).exec();
 
             fs.unlinkSync(filePath);
-            resolve();
+            resolve(track);
         });
 
         gfsWriteStream.on('error', error => {
@@ -60,7 +61,7 @@ const getUserMusic = async (req, res) => {
         return res.status(404).json({ message: `No user registered with username ${username}` }); 
     }
 
-    const tracks = Track.find({ 'trackId': { $in: user.tracks } });
+    const tracks = Track.find({ '_id': { $in: user.tracks } });
 
     if (!req.query.page && !req.query.page && !req.query.orderBy && !req.query.orderType) {
         return res.send(await tracks.sort('-uploadDate'));
@@ -85,6 +86,103 @@ const getTrack = async (req, res) => {
 
 };
 
+const addTrack = async (req, res) => {
+    const { username, trackId } = req.params;
+    const user = await User.findOne({ username });
+    if (!user) {
+        return res.status(404).json({ message: `No user registered with username ${username}` }); 
+    }
+
+    user.tracks.push(trackId);
+    User.findOneAndUpdate({ username }, { tracks: user.tracks }, {}).exec();
+    Track.findByIdAndUpdate(trackId, { $inc: { usersLinks: 1 } }, {}, err => {
+        if (err) {
+            res.status(500).json({ message: `Error while adding track` });
+        } else {
+            res.json({ message: 'Successfully added' });
+        }
+    });
+};
+
+const updateTrack = async (req, res) => {
+    const { username, trackId } = req.params;
+    const { artist, title, lyrics } = req.body;
+
+    const user = await User.findOne({ username });
+    const track = await Track.findById(trackId);
+
+    if (track.artist === artist && track.title === title &&
+        track.lyrics === lyrics) {
+        return res.json({ message: 'Nothing to update' });
+    }
+
+    const updatedTrack = new Track({
+        trackId: track.trackId,
+        duration: track.duration,
+        dataFormat: track.dataFormat,
+        codecProfile: track.codecProfile,
+        album: track.album,
+        picture: track.picture,
+        uploadDate: track.uploadDate,
+        usersLinks: 1,
+        artist, title, lyrics
+    });
+
+    updatedTrack.save();
+
+    if (track.usersLinks === 1) {
+        Track.remove({ _id: track._id }).exec();
+    } else {
+        Track.findByIdAndUpdate(track._id, { $inc: { usersLinks: -1 } }).exec();
+    }
+
+    user.tracks.splice(user.tracks.indexOf(track._id), 1, updatedTrack._id);
+    User.findOneAndUpdate({ username: user.username }, { tracks: user.tracks }, {}).exec();
+    res.json({ message: 'Successfully updated', updatedTrack });
+}
+
+const deleteTrack = async (req, res) => {
+    const { username, trackId } = req.params;
+    const user = await User.findOne({ username });
+    if (!user) {
+        return res.status(404).json({ message: `No user registered with username ${username}` }); 
+    }
+
+    const track = await Track.findById(trackId);
+    if (!track) {
+        return res.status(404).json({ message: `No track found with id ${trackId}` });
+    }
+
+    const trackIndex = user.tracks.indexOf(trackId);
+    if (trackIndex !== -1) {
+        user.tracks.splice(trackIndex, 1);
+        User.findOneAndUpdate({ username }, { tracks: user.tracks }, {}, err => {
+            if (err) res.status(500).json({ message: 'Error while deleting track' });
+        });
+    } else return;
+
+    if (track.usersLinks === 1) {
+        const gfs = new GridFS(mongoose.connection.db);
+        gfs.remove({ _id: track.trackId }, err => {
+            if (err) res.status(500).json({ message: 'Error while deleting track' });
+            else {
+                Track.findByIdAndRemove(trackId, err => {
+                    if (err) res.status(500).json({ message: 'Error while deleting track' });
+                    else res.json({ message: 'Successfully deleted', trackId  });
+                });
+            }
+        })
+    } else {
+        Track.findByIdAndUpdate(trackId, { $inc: { usersLinks: -1 } }, {}, err => {
+            if (err) {
+                res.status(500).json({ message: `Error while deleting track` });
+            } else {
+                res.json({ message: 'Successfully deleted', trackId });
+            }
+        });
+    }
+};
+
 const uploadUserMusic = async (req, res) => {
     const username = req.params.username;
     const user = await User.findOne({ username });
@@ -95,9 +193,10 @@ const uploadUserMusic = async (req, res) => {
     const filePath = req.file.path;
     saveAudio(filePath, user)
         .catch(error => res.status(500).json({ message: 'Error while saving audio' }))
-        .then(() => res.json({ message: 'Saved' }));
+        .then(newTrack => res.json({ message: 'Saved', newTrack }));
 };
 
 module.exports = {
-    getUserMusic, getTrack, uploadUserMusic
+    getUserMusic, getTrack, uploadUserMusic,
+    addTrack, updateTrack, deleteTrack
 };

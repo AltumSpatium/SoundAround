@@ -18,7 +18,7 @@ const createAlbumCover = picture => {
 };
 
 const Track = props => {
-    const { track } = props;
+    const { track, onEditClick, onDeleteClick } = props;
     return (
         <List.Item key={track._id}>
             <div className="track-item">
@@ -40,8 +40,8 @@ const Track = props => {
                     </div>
                 </div>
                 <div className="track-item__controls">
-                    <button><Icon type='edit' /></button>
-                    <button><Icon type='delete' /></button>
+                    <button onClick={onEditClick}><Icon type='edit' /></button>
+                    <button onClick={onDeleteClick}><Icon type='delete' /></button>
                 </div>
             </div>
         </List.Item>

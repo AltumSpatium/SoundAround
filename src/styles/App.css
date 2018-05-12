@@ -9,7 +9,7 @@
     box-shadow: 0 1px 1px grey;
     position: fixed;
     width: 100%;
-    z-index: 9999;
+    z-index: 1051;
 }
 
 .app-header > div {
@@ -32,7 +32,7 @@
 
 .header-link a {
     display: inline-block;
-    line-height: 50px;
+    line-height: 48px;
     padding: 0 15px;
 }
 
@@ -127,5 +127,5 @@
 }
 
 .page-active * {
-    text-decoration: underline;
+    background-color: #1565C0;
 }

@@ -1,9 +1,14 @@
 import React, { Component } from 'react';
 import { List, Spin, Button, Icon, Select } from 'antd';
 import Track from './Track';
+import UploadModal from './UploadModal';
+import EditModal from './EditModal';
+import DeleteModal from './DeleteModal';
 import { connect } from 'react-redux';
 import InfiniteScroll from 'react-infinite-scroller';
-import { getMusicPage, clearMusicList } from '../../actions/music';
+import {
+    getMusicPage, clearMusicList, uploadTrack, updateTrack, deleteTrack
+} from '../../actions/music';
 import { sortOptions, groupByOptions } from '../../constants/music';
 
 import '../../styles/MusicPage.css';
@@ -19,13 +24,28 @@ class MusicPage extends Component {
             orderType: 'desc',
 
             sort: 'uploadDate',
-            groupBy: 'track'
+            groupBy: 'track',
+
+            uploadModal: false,
+            fileList: null,
+            uploadingPercent: 0,
+
+            editModal: false,
+            deleteModal: false,
+
+            chosenTrack: null
         };
 
         this.loadMore = this.loadMore.bind(this);
         this.renderListItem = this.renderListItem.bind(this);
         this.processTracks = this.processTracks.bind(this);
         this.onChangeSort = this.onChangeSort.bind(this);
+        this.uploadTrack = this.uploadTrack.bind(this);
+        this.onCancelUpload = this.onCancelUpload.bind(this);
+        this.onChangeUploadedFile = this.onChangeUploadedFile.bind(this);
+        this.startProgressBar = this.startProgressBar.bind(this);
+        this.editTrack = this.editTrack.bind(this);
+        this.deleteTrack = this.deleteTrack.bind(this);
     }
 
     onChangeSort(value) {
@@ -67,7 +87,16 @@ class MusicPage extends Component {
     }
 
     renderListItem(track) {
-        return <Track track={track} />
+        return (
+            <Track
+                track={track}
+                onEditClick={() => {
+                    this.setState({ chosenTrack: track }, () => this.showModal('editModal'));
+                }}
+                onDeleteClick={() => {
+                    this.setState({ chosenTrack: track }, () => this.showModal('deleteModal'));
+                }} />
+        );
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -86,9 +115,76 @@ class MusicPage extends Component {
 
     }
 
+    hideModal = (modalName, cb, timeout=0) => {
+        const hide = () => this.setState({ [modalName]: false }, cb ? cb : () => {});
+        if (timeout > 0) {
+            setTimeout(() => {
+                hide();
+            }, timeout);
+        } else hide();
+    }
+    showModal = (modalName, cb) => this.setState({ [modalName]: true }, cb ? cb : () => {})
+    clearUploadFileList = () => this.setState({fileList: null })
+
+    onCancelUpload() {
+        this.hideModal('uploadModal', this.clearUploadFileList);
+    }
+
+    onChangeUploadedFile(info) {
+        this.setState({ fileList: info.fileList });
+    }
+
+    startProgressBar() {
+        this.timerId = setInterval(() => {
+            const { uploadingPercent } = this.state;
+            const { isUploadingAudio } = this.props;
+
+            if (uploadingPercent >= 98 || !isUploadingAudio) {
+                clearInterval(this.timerId);
+                return;
+            }
+            
+            this.setState({ uploadingPercent: uploadingPercent + 2 });
+        }, 250);
+    }
+
+    uploadTrack() {
+        const { uploadTrack, currentUser, clearMusicList } = this.props;
+        const { fileList } = this.state;
+        if (!fileList || !currentUser) return;
+
+        this.startProgressBar();
+        uploadTrack(currentUser.username, fileList[0])
+            .then(() => {
+                this.hideModal('uploadModal', this.clearUploadFileList, 500);
+                this.setState({ page: 1, uploadingPercent: 100 },
+                    () => clearMusicList().then(() => this.loadMore()));
+            }).then(() => setTimeout(() => this.setState({ uploadingPercent: 0 }), 550));
+    }
+
+    editTrack({ artist, title, lyrics, trackId, needUpdate }) {
+        this.hideModal('editModal', () => this.setState({ chosenTrack: null }));
+        const { currentUser, updateTrack } = this.props;
+        const trackData = { artist, title, lyrics };
+        if (needUpdate) {
+            console.log(currentUser.username);
+            updateTrack(trackId, trackData, currentUser.username);
+        }
+    }
+
+    deleteTrack(trackId) {
+        this.hideModal('deleteModal', () => this.setState({ chosenTrack: null }));
+        const { currentUser, deleteTrack } = this.props;
+        deleteTrack(trackId, currentUser.username);
+    }
+
     render() {
-        const { tracks, loading, hasMore } = this.props;
-        const { sort, groupBy } = this.state;
+        const { tracks, loading, hasMore, isUploadingAudio } = this.props;
+        const {
+            sort, groupBy, uploadModal, fileList,
+            uploadingPercent, editModal, chosenTrack,
+            deleteModal
+        } = this.state;
 
         return (
             <div className="music-page">
@@ -116,7 +212,9 @@ class MusicPage extends Component {
                     </div>
                     <div className="col-md-3">
                         <div className='music-page__controls-panel'>
-                            <Button>Upload<Icon type='upload' /></Button><br />
+                            <Button onClick={() => this.showModal('uploadModal')} className='sa-btn'>
+                                Upload<Icon type='upload' />
+                            </Button><br />
                             <div>
                                 <span>Sort:</span>
                                 <Select
@@ -144,6 +242,27 @@ class MusicPage extends Component {
                         </div>
                     </div>
                 </div>
+
+                <UploadModal
+                    isVisible={uploadModal} percent={uploadingPercent}
+                    isUploading={isUploadingAudio} fileList={fileList}
+                    onCancelUpload={this.onCancelUpload}
+                    onClickUpload={this.uploadTrack}
+                    onChangeUploadedFile={this.onChangeUploadedFile} />
+
+                <EditModal
+                    isVisible={editModal} track={chosenTrack}
+                    onCancelEdit={() => {
+                        this.hideModal('editModal', () => this.setState({ chosenTrack: null }));
+                    }}
+                    onConfirmEdit={this.editTrack} />
+
+                <DeleteModal
+                    isVisible={deleteModal} track={chosenTrack}
+                    onCancelDelete={() => {
+                        this.hideModal('deleteModal', () => this.setState({ chosenTrack: null }));
+                    }}
+                    onConfirmDelete={this.deleteTrack} />
             </div>
         );
     }
@@ -153,14 +272,18 @@ const mapStateToProps = state => ({
     currentUser: state.user.currentUser,
     tracks: state.music.tracks,
     loading: state.music.isFetching,
-    hasMore: state.music.hasMore
+    hasMore: state.music.hasMore,
+    isUploadingAudio: state.music.isUploadingAudio
 });
 
 const mapDispatchToProps = dispatch => ({
     getMusicPage: (username, page, pageSize, orderBy, orderType) => {
         return dispatch(getMusicPage(username, page, pageSize, orderBy, orderType))
     },
-    clearMusicList: () => dispatch(clearMusicList())
-})
+    clearMusicList: () => dispatch(clearMusicList()),
+    uploadTrack: (username, track) => dispatch(uploadTrack(username, track)),
+    updateTrack: (trackId, trackData, username) => dispatch(updateTrack(trackId, trackData, username)),
+    deleteTrack: (trackId, username) => dispatch(deleteTrack(trackId, username))
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(MusicPage);

@@ -18,3 +18,15 @@ export const groupByOptions = [
     { title: 'Artist', value: 'artist' },
     { title: 'Upload date', value: 'uploadDate' }
 ];
+
+export const UPLOAD_TRACK_REQUEST = 'UPLOAD_TRACK_REQUEST';
+export const UPLOAD_TRACK_SUCCESS = 'UPLOAD_TRACK_SUCCESS';
+export const UPLOAD_TRACK_FAIL = 'UPLOAD_TRACK_FAIL';
+
+export const UPDATE_TRACK_REQUEST = 'UPDATE_TRACK_REQUEST';
+export const UPDATE_TRACK_SUCCESS = 'UPDATE_TRACK_SUCCESS';
+export const UPDATE_TRACK_FAIL = 'UPDATE_TRACK_FAIL';
+
+export const DELETE_TRACK_REQUEST = 'DELETE_TRACK_REQUEST';
+export const DELETE_TRACK_SUCCESS = 'DELETE_TRACK_SUCCESS';
+export const DELETE_TRACK_FAIL = 'DELETE_TRACK_FAIL';
