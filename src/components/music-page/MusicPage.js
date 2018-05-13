@@ -5,6 +5,7 @@ import UploadModal from './UploadModal';
 import EditModal from './EditModal';
 import DeleteModal from './DeleteModal';
 import { connect } from 'react-redux';
+import moment from 'moment';
 import InfiniteScroll from 'react-infinite-scroller';
 import {
     getMusicPage, clearMusicList, uploadTrack, updateTrack, deleteTrack
@@ -86,8 +87,9 @@ class MusicPage extends Component {
         this.setState({ page: page + 1 });
     }
 
-    renderListItem(track) {
-        return (
+    renderListItem(item) {
+        const { groupBy } = this.state;
+        const renderTrack = track => (
             <Track
                 track={track}
                 onEditClick={() => {
@@ -97,6 +99,19 @@ class MusicPage extends Component {
                     this.setState({ chosenTrack: track }, () => this.showModal('deleteModal'));
                 }} />
         );
+
+        if (groupBy === 'track') {
+            return renderTrack(item);
+        } else {
+            return (
+                <div className='music-page__grouped-block'>
+                    <p>{item.title}</p>
+                    <ul>
+                        {item.tracks.map(renderTrack)}
+                    </ul>
+                </div>
+            );
+        }
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -112,7 +127,54 @@ class MusicPage extends Component {
     }
 
     processTracks(tracks) {
+        const { groupBy } = this.state;
+        const groupByField = (tracks, fieldName) => {
+            return tracks.reduce((groupedTracks, track) => {
+                groupedTracks[track[fieldName]] = groupedTracks[track[fieldName]] || [];
+                groupedTracks[track[fieldName]].push(track);
+                return groupedTracks;
+            }, {});
+        };
+        const formatGroupedDates = groupedTracks => {
+            const withFormattedDates = {};
+            for (let key in groupedTracks) {
+                const formattedDate = moment(key).format('DD.MM.YYYY');
+                const formattedDateTracks = withFormattedDates[formattedDate];
 
+                if (formattedDateTracks) {
+                    withFormattedDates[formattedDate] = formattedDateTracks.concat(groupedTracks[key]);
+                } else withFormattedDates[formattedDate] = groupedTracks[key];
+            }
+            return withFormattedDates;
+        };
+
+        let groupedTracks;
+        switch (groupBy) {
+            case 'album':
+                groupedTracks = groupByField(tracks, 'album');
+                break;
+            case 'artist':
+                groupedTracks = groupByField(tracks, 'artist');
+                break;
+            case 'uploadDate':
+                groupedTracks = formatGroupedDates(groupByField(tracks, 'uploadDate'));
+                break;
+            case 'track':
+            default:
+                return tracks;
+        }
+
+        let processedTracks = [];
+        for (let key in groupedTracks) {
+            const processedTrackContainer = {
+                title: key,
+                tracks: groupedTracks[key]
+            };
+            processedTracks.push(processedTrackContainer);
+        }
+
+        processedTracks.sort((a, b) => a.title > b.title);
+        return processedTracks;
     }
 
     hideModal = (modalName, cb, timeout=0) => {
@@ -162,12 +224,11 @@ class MusicPage extends Component {
             }).then(() => setTimeout(() => this.setState({ uploadingPercent: 0 }), 550));
     }
 
-    editTrack({ artist, title, lyrics, trackId, needUpdate }) {
+    editTrack({ artist, title, lyrics, album, trackId, needUpdate }) {
         this.hideModal('editModal', () => this.setState({ chosenTrack: null }));
         const { currentUser, updateTrack } = this.props;
-        const trackData = { artist, title, lyrics };
+        const trackData = { artist, title, lyrics, album };
         if (needUpdate) {
-            console.log(currentUser.username);
             updateTrack(trackId, trackData, currentUser.username);
         }
     }
@@ -186,6 +247,8 @@ class MusicPage extends Component {
             deleteModal
         } = this.state;
 
+        const processedTracks = this.processTracks(tracks);
+
         return (
             <div className="music-page">
                 <div className="row">
@@ -197,7 +260,7 @@ class MusicPage extends Component {
                             hasMore={!loading && hasMore}
                             loadMore={this.loadMore}>
                             <List
-                                dataSource={tracks}
+                                dataSource={processedTracks}
                                 renderItem={this.renderListItem}>
                                 {loading && hasMore && (
                                     <div className="loading-container">

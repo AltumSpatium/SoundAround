@@ -106,13 +106,13 @@ const addTrack = async (req, res) => {
 
 const updateTrack = async (req, res) => {
     const { username, trackId } = req.params;
-    const { artist, title, lyrics } = req.body;
+    const { artist, title, lyrics, album } = req.body;
 
     const user = await User.findOne({ username });
     const track = await Track.findById(trackId);
 
     if (track.artist === artist && track.title === title &&
-        track.lyrics === lyrics) {
+        track.lyrics === lyrics && track.album === album) {
         return res.json({ message: 'Nothing to update' });
     }
 
@@ -121,11 +121,10 @@ const updateTrack = async (req, res) => {
         duration: track.duration,
         dataFormat: track.dataFormat,
         codecProfile: track.codecProfile,
-        album: track.album,
         picture: track.picture,
         uploadDate: track.uploadDate,
         usersLinks: 1,
-        artist, title, lyrics
+        artist, title, lyrics, album
     });
 
     updatedTrack.save();

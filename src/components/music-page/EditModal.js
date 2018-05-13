@@ -10,6 +10,7 @@ class EditModal extends Component {
             artist: '',
             title: '',
             lyrics: '',
+            album: '',
 
             lyricsVisible: false
         };
@@ -37,23 +38,24 @@ class EditModal extends Component {
     }
 
     onConfirmEdit() {
-        const { artist, title, lyrics } = this.state;
+        const { artist, title, lyrics, album } = this.state;
         const { track } = this.props;
-        const needUpdate = track.artist !== artist || track.title !== title || track.lyrics !== lyrics;
+        const needUpdate = track.artist !== artist || track.title !== title
+            || track.lyrics !== lyrics || track.album !== album;
         this.props.onConfirmEdit({
-            artist, title, lyrics, trackId: track._id, needUpdate
+            artist, title, lyrics, album, trackId: track._id, needUpdate
         });
         this.setState({ lyricsVisible: false });
     }
 
     componentWillReceiveProps(nextProps) {
-        const { artist, title, lyrics } = nextProps.track || {};
-        this.setState({ artist, title, lyrics });
+        const { artist, title, lyrics, album } = nextProps.track || {};
+        this.setState({ artist, title, lyrics, album });
     }
 
     render() {
         const { isVisible } = this.props;
-        const { artist, title, lyrics, lyricsVisible } = this.state;
+        const { artist, title, lyrics, album, lyricsVisible } = this.state;
 
         return (
             <Modal
@@ -71,6 +73,7 @@ class EditModal extends Component {
                 ]}>
                 <div className="music-page__edit-fields">
                     <Input addonBefore='Artist' name='artist' value={artist} onChange={this.onChange} />
+                    <Input addonBefore='Album' name='album' value={album} onChange={this.onChange} />
                     <Input addonBefore='Title' name='title' value={title} onChange={this.onChange} />
                     {lyricsVisible ?
                         <div>

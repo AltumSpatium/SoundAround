@@ -45,7 +45,7 @@ button.sa-btn:hover,
 }
 
 .music-page__upload-progress {
-    text-align: center;
+    padding-left: 10px;
 }
 
 .music-page__controls-panel > div > span {
@@ -253,5 +253,46 @@ button.sa-btn-error:focus {
 }
 
 .music-page__delete-warning-text p span {
+    font-weight: bold;
+}
+
+.track-lyrics {
+    margin-top: 15px;
+}
+
+.track-lyrics pre {
+    border-color: rgb(2, 136, 209, 0.2);
+    background-color: rgb(2, 136, 209, 0.1);
+    color: black;
+    font-size: 14px;
+    animation-name: openLyrics;
+    animation-duration: 1s;
+    animation-timing-function: ease;
+    overflow: hidden;
+}
+
+@keyframes openLyrics {
+    0% { height: 0; }
+    5% { height: 5%; }
+    10% { height: 10%; }
+    15% { height: 15%; }
+    20% { height: 20%; }
+    25% { height: 25%; }
+    30% { height: 30%; }
+    35% { height: 35%; }
+    40% { height: 40%; }
+    50% { height: 50%; }
+    60% { height: 60%; }
+    70% { height: 70%; }
+    100% { height: inherit; }
+}
+
+.music-page__grouped-block {
+    margin: 3px 0;
+    padding: 3px;
+}
+
+.music-page__grouped-block p {
+    font-size: 15px;
     font-weight: bold;
 }
