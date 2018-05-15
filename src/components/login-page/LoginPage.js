@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import AuthPanel from '../auth/AuthPanel';
 import { login } from '../../actions/auth';
+import { authenticate } from '../../util/authenticate';
 
 import '../../styles/LoginPage.css';
 
@@ -25,7 +26,9 @@ class LoginPage extends Component {
 
     onSubmit() {
         this.props.login(this.state).then(error => {
-            if (!error) this.props.history.push('/');
+            if (!error) {
+                this.props.getUser().then(() => this.props.history.push('/'));
+            }
         });
     }
 
@@ -51,7 +54,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-    login: userData => dispatch(login(userData))
+    login: userData => dispatch(login(userData)),
+    getUser: () => dispatch(authenticate())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(LoginPage);

@@ -1,28 +1,131 @@
-.App {
-  text-align: center;
+.page-main-content {
+    padding-top: 55px;
 }
 
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 80px;
+.app-header {
+    background-color: #1E88E5;
+    padding: 0px 10px;
+    height: 50px;
+    box-shadow: 0 1px 1px grey;
+    position: fixed;
+    width: 100%;
+    z-index: 1051;
 }
 
-.App-header {
-  background-color: #222;
-  height: 150px;
-  padding: 20px;
-  color: white;
+.app-header > div {
+    float: left;
 }
 
-.App-title {
-  font-size: 1.5em;
+.header-links-container {
+    margin-left: 100px;
 }
 
-.App-intro {
-  font-size: large;
+.header-links-container > div {
+    display: inline-block;
 }
 
-@keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+.header-link {
+    text-decoration: none;
+    height: 50px;
+    cursor: pointer;
+}
+
+.header-link a {
+    display: inline-block;
+    line-height: 48px;
+    padding: 0 15px;
+}
+
+.header-link:hover {
+    background-color: #1976D2;
+    transition: 0.2s ease;
+}
+
+.header-link *:hover,
+.header-link *:focus {
+    text-decoration: none;
+}
+
+.header-link span {
+    color: white;
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.app-logo {
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.app-logo a {
+    display: inline-block;
+    line-height: 42px;
+    padding-top: 4px;
+}
+
+.app-logo *:hover,
+.app-logo *:focus {
+    text-decoration: none;
+}
+
+.app-logo span {
+    color: white;
+    font-size: 26px;
+    font-weight: 600;
+}
+
+.btn-logout {
+    float: right;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 16px;
+    height: 50px;
+    padding: 0 10px;
+}
+
+.btn-logout:hover {
+    background-color: #1976D2;
+    transition: 0.2s ease;
+}
+
+.btn-logout:focus {
+    outline: none;
+}
+
+.btn-logout:active {
+
+}
+
+.up-arrow {
+    position: fixed;
+    bottom: 20px;
+    left: 40px;
+    font-size: 20px;
+    background-color: #90CAF9;
+    width: 35px;
+    height: 35px;
+    color: white;
+    text-align: center;
+    padding: 5px;
+    border-radius: 20px;
+    cursor: pointer;
+    display: block;
+}
+
+.up-arrow:hover {
+    background-color: #42A5F5;
+    transition: 0.2s ease;
+}
+
+.show {
+    display: block;
+}
+
+.hide {
+    display: none;
+}
+
+.page-active * {
+    background-color: #1565C0;
 }
