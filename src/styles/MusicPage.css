@@ -206,13 +206,13 @@ button.sa-btn:hover,
     margin: 5px 0;
 }
 
-.toggle-lyrics-btn {
+.toggle-lyrics-btn span {
     color: #42A5F5;
     cursor: pointer;
     transition: 0.2s ease;
 }
 
-.toggle-lyrics-btn:hover {
+.toggle-lyrics-btn span:hover {
     color: #1E88E5;
     text-decoration: underline;
     transition: 0.2s ease;

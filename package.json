@@ -2,6 +2,7 @@
   "name": "sound-around",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:8000",
   "dependencies": {
     "antd": "^3.0.3",
     "axios": "^0.18.0",
@@ -15,6 +16,8 @@
     "multer": "^1.3.0",
     "music-metadata": "^0.11.2",
     "react": "^16.3.0",
+    "react-dnd": "^2.6.0",
+    "react-dnd-html5-backend": "^2.6.0",
     "react-dom": "^16.3.0",
     "react-icons": "^2.2.7",
     "react-infinite-scroller": "^1.1.4",
@@ -31,8 +34,7 @@
     "react-scripts": "1.1.2"
   },
   "scripts": {
-    "start": "node server.js",
-    "heroku-postbuild": "npm i --only=dev && npm i && npm run build",
+    "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"

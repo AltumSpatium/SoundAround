@@ -77,12 +77,16 @@ class EditModal extends Component {
                     <Input addonBefore='Title' name='title' value={title} onChange={this.onChange} />
                     {lyricsVisible ?
                         <div>
-                            <div className='toggle-lyrics-btn' onClick={this.toggleLyrics}>Hide lyrics</div>
+                            <div className='toggle-lyrics-btn'>
+                                <span onClick={this.toggleLyrics}>Hide lyrics</span>
+                            </div>
                             <Input.TextArea
                                 name='lyrics' onChange={this.onChange}
                                 defaultValue={lyrics} rows={8} autosize={false} />
+                        </div> :
+                        <div className='toggle-lyrics-btn'>
+                            <span onClick={this.toggleLyrics}>Show lyrics</span>
                         </div>
-                        : <div className='toggle-lyrics-btn' onClick={this.toggleLyrics}>Show lyrics</div>
                     }
                 </div>
             </Modal>

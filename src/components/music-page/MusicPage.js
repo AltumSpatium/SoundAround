@@ -20,7 +20,7 @@ class MusicPage extends Component {
 
         this.state = {
             page: 1,
-            pageSize: 8,
+            pageSize: 10,
             orderBy: 'uploadDate',
             orderType: 'desc',
 
