@@ -1,6 +1,7 @@
 const moment = require('moment');
 const shuffle = require('../util/shuffle');
 const fs = require('fs');
+const path = require('path');
 const mm = require('music-metadata');
 
 const mongoose = require('mongoose');
@@ -189,7 +190,7 @@ const uploadUserMusic = async (req, res) => {
         return res.status(404).json({ message: `No user registered with username ${username}` }); 
     }
 
-    const filePath = req.file.path;
+    const filePath = path.join('./', req.file.path);
     saveAudio(filePath, user)
         .catch(error => res.status(500).json({ message: 'Error while saving audio' }))
         .then(newTrack => res.json({ message: 'Saved', newTrack }));
