@@ -190,7 +190,7 @@ const uploadUserMusic = async (req, res) => {
         return res.status(404).json({ message: `No user registered with username ${username}` }); 
     }
 
-    const filePath = path.join('./', req.file.path);
+    const filePath = req.file.path;
     saveAudio(filePath, user)
         .catch(error => res.status(500).json({ message: 'Error while saving audio' }))
         .then(newTrack => res.json({ message: 'Saved', newTrack }));
