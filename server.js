@@ -5,13 +5,18 @@ const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json({limit: '50mb'});
 const urlencodedParser = bodyParser.urlencoded({limit: '50mb', extended: true});
 
+const uploadsDirname = path.join(__dirname , '/build/uploads');
 const multer = require('multer');
 const upload = multer({
     storage: multer.diskStorage({
-        destination: (req, file, cb) => cb(null, './uploads'),
+        destination: (req, file, cb) => cb(null, uploadsDirname),
         filename: (req, file, cb) => cb(null, file.originalname)
     })
 });
+
+if (!fs.existsSync(uploadsDirname)) {
+    fs.mkdirSync(uploadsDirname)
+}
 
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
