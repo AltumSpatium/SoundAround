@@ -5,11 +5,13 @@ import { loadingBarReducer } from 'react-redux-loading-bar';
 import auth from './auth';
 import user from './user';
 import music from './music';
+import playlist from './playlist';
 
 export default combineReducers({
     auth,
     user,
     music,
+    playlist,
     routing: routerReducer,
     toastr: toastrReducer,
     loadingBar: loadingBarReducer

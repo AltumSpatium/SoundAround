@@ -1,0 +1,77 @@
+.rooms-main {
+    background-color: #eaf2ff;
+    height: 500px;
+    border-radius: 5px;
+}
+
+.room-info {
+    background-color: #eaf2ff;
+    border-radius: 5px;
+}
+
+.rooms-list {
+    margin-top: 10px;
+}
+
+.room-card {
+    background-color: rgb(25, 118, 210, 0.3);
+    margin: 5px 6px;
+    padding: 3px;
+    height: 40px;
+    border-radius: 6px;
+}
+
+.room-name {
+    float: left;
+    font-size: 21px;
+}
+
+.room-users{ 
+    float: right;
+    font-size: 15px;
+    margin-right: 20px;
+}
+
+.active {
+    background-color: rgb(25, 118, 210, 0.6);
+}
+
+.info-header {
+    height: 35px;
+}
+
+.info-header > span {
+    float: left;
+    margin: 3px;
+    font-size: 27px;
+}
+
+.info-header .ant-btn {
+    float: right;
+    margin: 3px;
+}
+
+.descr {
+    float: left;
+    font-size: 20px;
+    padding: 5px;
+}
+
+.now-playing {
+    margin-top: 15px;
+    padding: 5px;
+    font-size: 18px;
+    float: left;
+}
+
+.now-playing span {
+    font-weight: bold;
+}
+
+.search-bar {
+    width: 400px !important;
+    margin-top: 5px !important;
+    margin-left: 50% !important;
+    transform: translateX(-50%);
+
+}

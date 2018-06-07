@@ -25,8 +25,7 @@ mongoose.connect('mongodb://admin:Topaz123_@ds131989.mlab.com:31989/sound-around
 const { signup, login, verifyAuth, verifyUser, decodeToken } = require('./src/app/routes/auth');
 const { getUser, updateUser, deleteUser } = require('./src/app/routes/user');
 const { getUserMusic, uploadUserMusic, addTrack, updateTrack, deleteTrack } = require('./src/app/routes/music');
-
-const User = require('./src/app/models/User');
+const { getUserPlaylist, createPlaylist, getPlaylistTracks, updatePlaylist } = require('./src/app/routes/playlist');
 
 const app = new Express();
 const port = process.env.PORT || 8000;
@@ -51,6 +50,16 @@ app.route('/api/music/:username/:trackId')
     .get(verifyAuth, verifyUser, addTrack)
     .put(verifyAuth, verifyUser, updateTrack)
     .delete(verifyAuth, verifyUser, deleteTrack);
+
+app.route('/api/playlists/list/:playlistId')
+    .get(verifyAuth, getUserPlaylist)
+    .put(verifyAuth, updatePlaylist);
+
+app.route('/api/playlists/music/:username/:playlistId')
+    .get(verifyAuth, verifyUser, getPlaylistTracks);
+
+app.route('/api/playlists/:username')
+    .post(verifyAuth, verifyUser, createPlaylist);
 
 app.get('/*', (req, res) => {
     res.sendFile(path.join(__dirname, '/build/index.html'));

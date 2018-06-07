@@ -3,47 +3,30 @@ import {
     UPLOAD_TRACK_REQUEST, UPLOAD_TRACK_SUCCESS, UPLOAD_TRACK_FAIL,
     UPDATE_TRACK_REQUEST, UPDATE_TRACK_SUCCESS, UPDATE_TRACK_FAIL,
     DELETE_TRACK_REQUEST, DELETE_TRACK_SUCCESS, DELETE_TRACK_FAIL,
-    CLEAR_MUSIC_LIST
+    CLEAR_MUSIC_LIST, SET_MUSIC_TRACKLIST
 } from '../constants/music';
 import {
-    request, success, fail
+    request, success, fail, callAPI
 } from './default';
 import { toastr } from 'react-redux-toastr';
-
-const processReponse = async response => {
-    const json = await response.json();
-    switch (response.status) {
-        case 200:
-            return json;
-        case 400:
-        case 401:
-        case 403:
-        case 404:
-        case 409:
-        case 500:
-            throw json;
-        default:
-            const defaultError = { message: 'An error occured' };
-            throw defaultError;            
-    }
-};
 
 const getMusicPageRequest = request(GET_MUSIC_PAGE_REQUEST);
 const getMusicPageSuccess = success(GET_MUSIC_PAGE_SUCCESS);
 const getMusicPageFail = fail(GET_MUSIC_PAGE_FAIL);
 
-export const getMusicPage = (username, page, pageSize, orderBy, orderType) => dispatch => {
-    dispatch(getMusicPageRequest());
-    const url = `/api/music/list/${username}?` + 
-        `pageSize=${pageSize}&page=${page}&orderBy=${orderBy}&orderType=${orderType}`;
-    return fetch(url, {
+export const getMusicPage = (username, page, pageSize, orderBy, orderType) => {
+    return callAPI({
+        url: `/api/music/list/${username}?` + 
+            `pageSize=${pageSize}&page=${page}&orderBy=${orderBy}&orderType=${orderType}`,
+        params: {
             headers: {
                 'x-access-token': localStorage.getItem('sa_token')
             }
-    })
-    .then(processReponse)
-    .then(json => dispatch(getMusicPageSuccess(json)))
-    .catch(error => dispatch(getMusicPageFail(error)))
+        },
+        requestAction: getMusicPageRequest,
+        successAction: getMusicPageSuccess,
+        failAction: getMusicPageFail
+    });
 };
 
 const clearMusicListRequest = request(CLEAR_MUSIC_LIST);
@@ -56,88 +39,46 @@ const uploadTrackRequest = request(UPLOAD_TRACK_REQUEST);
 const uploadTrackSuccess = success(UPLOAD_TRACK_SUCCESS);
 const uploadTrackFail = fail(UPLOAD_TRACK_FAIL);
 
-export const uploadTrack = (username, track) => async dispatch => {
-    dispatch(uploadTrackRequest());
+export const uploadTrack = (username, track) => {
     const formData = new FormData();
     formData.append('audio', track);
-    return fetch(`/api/music/list/${username}`, {
-        method: 'POST',
-        headers: {
-            'x-access-token': localStorage.getItem('sa_token')
+    return callAPI({
+        url: `/api/music/list/${username}`,
+        params: {
+            method: 'POST',
+            headers: {
+                'x-access-token': localStorage.getItem('sa_token')
+            },
+            body: formData
         },
-        body: formData
-    })
-    .then(processReponse)
-    .then(json => {
-        toastr.success('Success', json.message);
-        dispatch(uploadTrackSuccess(json))
-    })
-    .catch(error => {
-        toastr.error('Error', error.message);
-        dispatch(uploadTrackFail(error))
+        requestAction: uploadTrackRequest,
+        successAction: uploadTrackSuccess,
+        failAction: uploadTrackFail,
+        onSuccess: json => toastr.success('Success', json.message),
+        onFail: error => toastr.error('Error', error.message)
     });
 };
-
-// export const uploadTrack = (username, track, onProgress) => async dispatch => {
-//     dispatch(uploadTrackRequest());
-//     const formData = new FormData();
-//     formData.append('audio', track);
-
-//     return axios.post(`/api/music/list/${username}`, formData, {
-//         headers: {
-//             'x-access-token': localStorage.getItem('sa_token')
-//         },
-//         onUploadProgress: onProgress
-//     })
-//     .then(response => {
-//         const json = response.data;
-//         switch (response.status) {
-//             case 200:
-//                 return json;
-//             case 400:
-//             case 401:
-//             case 403:
-//             case 404:
-//             case 409:
-//             case 500:
-//                 throw json;
-//             default:
-//                 const defaultError = { message: 'An error occured' };
-//                 throw defaultError;
-//         }
-//     })
-//     .then(json => {
-//         toastr.success('Success', json.message);
-//         dispatch(uploadTrackSuccess(json))
-//     })
-//     .catch(error => {
-//         toastr.error('Error', error.message);
-//         dispatch(uploadTrackFail(error))
-//     });
-// };
 
 const updateTrackRequest = request(UPDATE_TRACK_REQUEST);
 const updateTrackSuccess = success(UPDATE_TRACK_SUCCESS);
 const updateTrackFail = fail(UPDATE_TRACK_FAIL);
 
-export const updateTrack = (trackId, trackData, username) => async dispatch => {
-    dispatch(updateTrackRequest());
-    return fetch(`/api/music/${username}/${trackId}`, {
-        method: 'PUT',
-        headers: {
-            'x-access-token': localStorage.getItem('sa_token'),
-            'Content-type': 'application/json'
+export const updateTrack = (trackId, trackData, username) => {
+    return callAPI({
+        url: `/api/music/${username}/${trackId}`,
+        params: {
+            method: 'PUT',
+            headers: {
+                'x-access-token': localStorage.getItem('sa_token'),
+                'Content-type': 'application/json'
+            },
+            body: JSON.stringify(trackData)
         },
-        body: JSON.stringify(trackData)
-    })
-    .then(processReponse)
-    .then(json => {
-        toastr.success('Success', json.message);
-        dispatch(updateTrackSuccess(json.updatedTrack));
-    })
-    .catch(error => {
-        toastr.error('Error', error.message);
-        dispatch(updateTrackFail(error));
+        requestAction: updateTrackRequest,
+        successAction: successObj => updateTrackSuccess(successObj.updatedTrack),
+        failAction: updateTrackFail,
+        onSuccess: json => toastr.success('Success', json.message),
+        onFail: error => toastr.error('Error', error.message)
     });
 };
 
@@ -145,21 +86,25 @@ const deleteTrackRequest = request(DELETE_TRACK_REQUEST);
 const deleteTrackSuccess = success(DELETE_TRACK_SUCCESS);
 const deleteTrackFail = fail(DELETE_TRACK_FAIL);
 
-export const deleteTrack = (trackId, username) => async dispatch => {
-    dispatch(deleteTrackRequest());
-    return fetch(`/api/music/${username}/${trackId}`, {
-        method: 'DELETE',
-        headers: {
-            'x-access-token': localStorage.getItem('sa_token'),
-        }
-    })
-    .then(processReponse)
-    .then(json => {
-        toastr.success('Success', json.message);
-        dispatch(deleteTrackSuccess(json.trackId));
-    })
-    .catch(error => {
-        toastr.error('Error', error.message);
-        dispatch(deleteTrackFail(error));
+export const deleteTrack = (trackId, username) => {
+    return callAPI({
+        url: `/api/music/${username}/${trackId}`,
+        params: {
+            method: 'DELETE',
+            headers: {
+                'x-access-token': localStorage.getItem('sa_token'),
+            }
+        },
+        requestAction: deleteTrackRequest,
+        successAction: successObj => deleteTrackSuccess(successObj.trackId),
+        failAction: deleteTrackFail,
+        onSuccess: json => toastr.success('Success', json.message),
+        onFail: error => toastr.error('Error', error.message)
     });
+};
+
+const setMusicTracklistSuccess = success(SET_MUSIC_TRACKLIST);
+
+export const setMusicTracklist = tracklist => dispatch => {
+    return dispatch(setMusicTracklistSuccess(tracklist));
 };

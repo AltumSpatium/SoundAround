@@ -1,0 +1,152 @@
+.current-room-page {
+    position: relative;
+}
+
+.room-main {
+    background-color: rgb(25, 118, 210, 0.3);
+    width: 600px;
+    height: 530px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 5px;
+}
+
+.croom-header {
+    padding: 3px;
+    background-color: #039BE5;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    color: white;
+}
+
+.croom-header > span {
+    float: left;
+    font-size: 27px;
+}
+
+.croom-header .ant-btn {
+    float: right;
+    margin: 2px;
+}
+
+.room-aside {
+    position: absolute;
+    right: 40px;
+    background-color: rgb(25, 118, 210, 0.3);
+    width: 300px;
+    border-radius: 5px;
+}
+
+.chat-window {
+    margin: 15px auto 0 auto;
+    width: 95%;
+    height: 420px;
+    border: 1px solid rgb(25, 118, 210, 0.4);
+    border-top-right-radius: 5px;
+    border-top-left-radius: 5px;
+    background-color: white;
+    border-bottom: none;
+    position: relative;
+}
+
+.chat-input {
+    width: 95%;
+    height: 35px;
+    background-color: rgb(25, 118, 210, 0.4);
+    margin: auto;
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+.chat-input input {
+    border-radius: 0;
+    width: 460px;
+    height: 35px;
+    margin: 0 !important;
+}
+
+.chat-input button {
+    border: none;
+    width: 70px;
+    height: 35px;
+    margin: 0;
+    border-bottom-right-radius: 5px;
+    background-color: rgb(25, 118, 210, 0.9);
+    color: white;
+}
+
+.chat-input > div {
+    text-align: center;
+    display: inline-block;
+    width: 40px;
+    color: white;
+    border-bottom-left-radius: 5px;
+    height: 35px;
+}
+
+.msg {
+    width: 97%;
+    margin: 5px auto;
+    background-color: rgb(25, 118, 210, 0.05);
+    padding: 5px;
+    position: absolute;
+    bottom: 0;
+    right: 9px;
+}
+
+.msg-text {
+
+}
+
+.msg-author {
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.room-aside {
+    padding: 3px;
+}
+
+.np > span, .tracklist > span {
+    font-size: 15px;
+    font-weight: bold;
+    color: black;
+}
+
+.tp-wrap {
+    background-color: rgb(25, 118, 210, 0.3);
+    padding: 2px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    border-radius: 5px;
+}
+
+.tracklist {
+    margin-top: 10px;
+}
+
+.tracklist > div {
+    height: 300px;
+    overflow: auto;
+}
+
+.users-online {
+    margin-top: 10px;
+    padding: 3px;
+}
+
+.users-online > span {
+    font-size: 13px;
+    font-weight: 100;
+    margin-left: 10px;
+    color: black;
+    text-decoration: underline;
+}
+
+.users-online > span:first-child {
+    font-size: 15px;
+    font-weight: bold;
+    margin-left: 0;
+    text-decoration: none;
+}
