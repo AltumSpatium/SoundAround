@@ -268,7 +268,8 @@ button.sa-btn-error:focus {
     animation-name: openLyrics;
     animation-duration: 1s;
     animation-timing-function: ease;
-    overflow: hidden;
+    overflow: auto;
+    max-height: 400px;
 }
 
 @keyframes openLyrics {

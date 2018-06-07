@@ -4,7 +4,7 @@ import {
     DELETE_USER_REQUEST, DELETE_USER_SUCCESS, DELETE_USER_FAIL
 } from '../constants/user';
 import {
-    request, success, fail
+    request, success, fail, callAPI
 } from './default';
 
 const getUserRequest = request(GET_USER_REQUEST);
@@ -19,31 +19,18 @@ const deleteUserRequest = request(DELETE_USER_REQUEST);
 const deleteUserSuccess = success(DELETE_USER_SUCCESS);
 const deleteUserFail = fail(DELETE_USER_FAIL);
 
-export const getUser = username => dispatch => {
-    dispatch(getUserRequest());
-    return fetch(`/api/user/${username}`, {
+export const getUser = username => {
+    return callAPI({
+        url: `/api/user/${username}`,
+        params: {
             headers: {
                 'x-access-token': localStorage.getItem('sa_token')
             }
-        })
-        .then(async response => {
-            const json = await response.json();
-            switch (response.status) {
-                case 200:
-                    return json;
-                case 400:
-                case 401:
-                case 403:
-                case 404:
-                case 409:
-                    throw json;
-                default:
-                    const defaultError = { message: 'An error occured' };
-                    throw defaultError;
-            }
-        })
-        .then(json => dispatch(getUserSuccess(json)))
-        .catch(error => dispatch(getUserFail(error)));
+        },
+        requestAction: getUserRequest,
+        successAction: getUserSuccess,
+        failAction: getUserFail
+    });
 };
 
 export const updateUser = () => dispatch => {

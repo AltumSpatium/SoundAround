@@ -24,7 +24,8 @@ const AppWrapper = () => (
         <App>
             <Route path='/music' component={MusicPage} />
             <Route exact path='/playlists' component={PlaylistsPage} />
-            <Route path='/playlists/:playlistId' component={PlaylistPage} />
+            <Route path='/playlists/edit/:playlistId' component={PlaylistPage} />
+            <Route path='/playlists/add' component={PlaylistPage} />
             <Route exact path='/rooms' component={RoomsPage} />
             <Route path='/rooms/:roomId' component={CurrentRoomPage} />
             <Route path='/settings' component={SettingsPage} />

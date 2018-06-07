@@ -6,6 +6,7 @@ import {
 import {
     request, success, fail, callAPI
 } from './default';
+import { toastr } from 'react-redux-toastr';
 
 const createParams = body => ({
     headers: {
@@ -21,7 +22,9 @@ const fetchAuth = (url, userData, requestAction, successAction, failAction) => {
         params: createParams(userData),
         requestAction,
         successAction,
-        failAction
+        failAction,
+        onSuccess: json => localStorage.setItem('sa_token', json.token),
+        onFail: error => toastr.error('Error', error.message)
     });
 }
 

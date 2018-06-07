@@ -2,10 +2,9 @@ import React, { Component } from 'react';
 import { Icon } from 'antd';
 import LoadingBar from 'react-redux-loading-bar';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
+import AppHeader from './AppHeader';
 import { connect } from 'react-redux';
 import { logout } from '../../actions/auth';
-import { pages } from '../../constants/default';
 
 import '../../styles/App.css';
 
@@ -45,21 +44,7 @@ class App extends Component {
         return (
             <div className="app">
                 <LoadingBar style={{ height: '2px', backgroundColor: 'red' }} />
-                <header className='app-header'>
-                    <div className="app-logo">
-                        <Link to=''>
-                            <span>Sound Around</span>
-                        </Link>
-                    </div>
-                    <div className="header-links-container">
-                        {pages.map(page => (
-                            <div key={page.path} className={`header-link ${isActive(page.path)}`}>
-                                <Link to={page.path}><span>{page.title}</span></Link>
-                            </div>
-                        ))}
-                    </div>
-                    <button onClick={this.onLogoutClick} className='btn-logout'>Logout</button>
-                </header>
+                <AppHeader onLogoutClick={this.onLogoutClick} isActive={isActive} />
                 <section className='page-main-content'>
                     {this.props.children}
                 </section>

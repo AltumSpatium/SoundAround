@@ -3,7 +3,7 @@ import {
     UPLOAD_TRACK_REQUEST, UPLOAD_TRACK_SUCCESS, UPLOAD_TRACK_FAIL,
     UPDATE_TRACK_REQUEST, UPDATE_TRACK_SUCCESS, UPDATE_TRACK_FAIL,
     DELETE_TRACK_REQUEST, DELETE_TRACK_SUCCESS, DELETE_TRACK_FAIL,
-    CLEAR_MUSIC_LIST
+    CLEAR_MUSIC_LIST, SET_MUSIC_TRACKLIST
 } from '../constants/music';
 
 const initialState = {
@@ -47,6 +47,8 @@ const music = (state=initialState, action) => {
             return { ...state, tracks: state.tracks.filter(track => track._id !== trackId) };
         case DELETE_TRACK_FAIL:
             return state;
+        case SET_MUSIC_TRACKLIST:
+            return { ...state, tracks: action.payload };
         default:
             return state;
     }
