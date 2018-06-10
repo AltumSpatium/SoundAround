@@ -1,21 +1,6 @@
 import React, { Component } from 'react';
 import { List, Icon } from 'antd';
-import * as TiNotes from 'react-icons/lib/ti/notes';
-
-const beautifyDuration = duration => {
-    const minutes = Math.floor(duration / 60);
-    const seconds = Math.floor(duration) - minutes * 60;
-    return `${minutes}:${seconds}`;
-};
-
-const createAlbumCover = picture => {
-    if (!picture) return <div className='default-album-cover'><TiNotes /></div>;
-
-    const rawPicture = new Buffer(picture.data.data);
-    return (
-        <img src={`data:image/jpeg;base64,${rawPicture.toString('base64')}`} alt='Album cover' />
-    );
-};
+import { beautifyDuration, createPicture } from '../../util/trackUtil';
 
 class Track extends Component {
     constructor(props) {
@@ -24,6 +9,8 @@ class Track extends Component {
         this.state = {
             lyricsVisible: false
         };
+
+        this.albumCover = createPicture(props.track.picture);
 
         this.toggleLyrics = this.toggleLyrics.bind(this);
     }
@@ -42,7 +29,7 @@ class Track extends Component {
                 <List.Item key={track._id}>
                     <div className="track-item">
                         <div className="track-item__picture">
-                            {createAlbumCover(track.picture)}
+                            {this.albumCover}
                         </div>
                         <div className="track-item__info">
                             <div className='track-item__info-title'>

@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import { Button, Select, Icon, List, Card, Spin } from 'antd';
 import InfiniteScroll from 'react-infinite-scroller';
-import Playlist from './Playlist';
-import DeletePlaylistModal from './DeletePlaylistModal';
 import { connect } from 'react-redux';
 import { sortOptions } from '../../constants/playlist';
 import {
@@ -19,21 +17,19 @@ class PlaylistsPage extends Component {
             page: 1,
 
             sort: 'createdDate',
+
             orderBy: '',
             orderType: '',
 
-            openModal: false,
-            deleteModal: false,
+            selectedPlaylist: '',
 
-            chosenPlaylist: null
+            deleteModalVisible: false
         };
 
         this.onChangeSort = this.onChangeSort.bind(this);
         this.loadMore = this.loadMore.bind(this);
         this.renderListItem = this.renderListItem.bind(this);
         this.createPlaylist = this.createPlaylist.bind(this);
-        this.editPlaylist = this.editPlaylist.bind(this);
-        this.deletePlaylist = this.deletePlaylist.bind(this);
     }
 
     onChangeSort(value) {
@@ -77,28 +73,8 @@ class PlaylistsPage extends Component {
         this.props.clearPlaylist();
     }
 
-    hideModal = (modalName, cb, timeout=0) => {
-        const hide = () => this.setState({ [modalName]: false }, cb ? cb : () => {});
-        if (timeout > 0) {
-            setTimeout(() => {
-                hide();
-            }, timeout);
-        } else hide();
-    }
-    showModal = (modalName, cb) => this.setState({ [modalName]: true }, cb ? cb : () => {})
-
     createPlaylist() {
         this.props.history.push('/playlists/add');
-    }
-
-    editPlaylist(playlistId) {
-        this.props.history.push(`/playlists/edit/${playlistId}`);
-    }
-
-    deletePlaylist(playlistId) {
-        this.hideModal('deleteModal', () => this.setState({ chosenPlaylist: null }));
-        const { currentUser, deletePlaylist } = this.props;
-        deletePlaylist(currentUser.username, playlistId);
     }
 
     loadMore() {
@@ -111,20 +87,20 @@ class PlaylistsPage extends Component {
     }
 
     renderListItem(playlist) {
+        console.log(playlist.playlistPicture);
+
         return (
-            <List.Item key={playlist._id}>
-                <Playlist
-                    playlist={playlist}
-                    onEditClick={() => this.editPlaylist(playlist._id)}
-                    onDeleteClick={() => {
-                        this.setState({ chosenPlaylist: playlist }, () => this.showModal('deleteModal'));
-                    }} />
+            <List.Item>
+                <Card
+                >
+                    {playlist.title}
+                </Card>
             </List.Item>
         );
     }
 
     render() {
-        const { sort, deleteModal, chosenPlaylist } = this.state;
+        const { sort } = this.state;
         const { playlists, loadingPlaylists, hasMorePlaylists } = this.props;
 
         return (
@@ -172,13 +148,6 @@ class PlaylistsPage extends Component {
                         </div>
                     </div>
                 </div>
-
-                <DeletePlaylistModal
-                    isVisible={deleteModal} playlist={chosenPlaylist}
-                    onCancelDelete={() => {
-                        this.hideModal('deleteModal', () => this.setState({ chosenPlaylist: null }));
-                    }}
-                    onConfirmDelete={this.deletePlaylist} />
             </div>
         );
     }

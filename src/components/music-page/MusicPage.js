@@ -74,7 +74,7 @@ class MusicPage extends Component {
                 orderType = 'desc';
                 break;
         }
-        this.setState({sort: value, orderType, orderBy, page: 1}, this.loadMore);
+        this.setState({sort: value, orderType, orderBy, page: 1});
         this.props.clearMusicList();
     }
 
@@ -112,14 +112,6 @@ class MusicPage extends Component {
                 </div>
             );
         }
-    }
-
-    componentDidUpdate(prevProps, prevState) {
-        if (!prevProps.currentUser && this.props.currentUser) this.loadMore();
-    }
-
-    componentDidMount() {
-        if (this.props.currentUser) this.loadMore();
     }
 
     componentWillUnmount() {
@@ -255,7 +247,7 @@ class MusicPage extends Component {
                     <div className="col-md-3"></div>
                     <div className="col-md-6">
                         <InfiniteScroll
-                            initialLoad={false}
+                            initialLoad={true}
                             pageStart={0}
                             hasMore={!loading && hasMore}
                             loadMore={this.loadMore}>
@@ -274,7 +266,7 @@ class MusicPage extends Component {
                         </InfiniteScroll>
                     </div>
                     <div className="col-md-3">
-                        <div className='music-page__controls-panel'>
+                        <div className='controls-panel'>
                             <Button onClick={() => this.showModal('uploadModal')} className='sa-btn'>
                                 Upload<Icon type='upload' />
                             </Button><br />

@@ -13,7 +13,8 @@ export const GET_PLAYLIST_PAGE_FAIL = 'GET_PLAYLIST_PAGE_FAIL';
 export const CLEAR_PLAYLIST = 'CLEAR_PLAYLIST';
 
 export const sortOptions = [
-    { title: 'By default', value: 'uploadDate' },
+    { title: 'By default', value: 'createdDate' },
+    { title: 'By update date', value: 'lastUpdatedDate' },
     { title: 'By title', value: 'title' },
     { title: 'By duration', value: 'duration' },
     { title: 'By tracks count', value: 'tracksCount' },

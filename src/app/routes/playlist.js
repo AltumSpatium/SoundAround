@@ -12,7 +12,7 @@ const Playlist = require('../models/Playlist');
 const { decodeToken } = require('./auth');
 
 const urlExample = '/api/playlists/list/alex/123?pageSize=20&page=2';
-const orderByTypes = ['uploadDate', 'title', 'tracksCount', 'duration', 'random'];
+const orderByTypes = ['createdDate', 'lastUpdatedDate', 'tracksCount', 'duration', 'title', 'random'];
 
 const getPlaylistTracks = async (req, res) => {
     const { username, playlistId } = req.params;
@@ -31,13 +31,19 @@ const getPlaylistTracks = async (req, res) => {
     }
 
     const playlistTracks = Track.find({ _id: { $in: playlist.tracks } });
+    const sortPlaylist = (tracksPage, playlistTracks) => {
+        return tracksPage.sort((a, b) => {
+            return playlistTracks.indexOf(a._id) - playlistTracks.indexOf(b._id);
+        });
+    };
 
     if (!req.query.pageSize && !req.query.page) {
-        return res.send(await playlistTracks);
+        const pTracks = await playlistTracks;
+        return res.send(sortPlaylist(pTracks, playlist.tracks));
     } else {
         const { pageSize=10, page=1 } = req.query;
         const playlistTracksPage = await playlistTracks.skip(pageSize * (page - 1)).limit(+pageSize);
-        return res.send(playlistTracksPage);
+        return res.send(sortPlaylist(playlistTracksPage, playlist.tracks));
     }
 };
 
@@ -53,6 +59,33 @@ const getUserPlaylist = async (req, res) => {
     }
 
     return res.send(playlist);
+};
+
+const getPlaylists = async (req, res) => {
+    const { username } = req.params;
+    const user = await User.findOne({ username });
+    if (!user) {
+        return res.status(404).json({ message: `No user registered with username ${username}` });
+    }
+
+    const playlists = Playlist.find({ _id: { $in: user.playlists } });
+    if (!req.query.page && !req.query.pageSize && !req.query.orderBy &&
+        !req.query.orderType) {
+        return res.send(await playlists.sort('-createdDate'))
+    } else {
+        const getSortParam = (orderBy, orderType) => {
+            let sortParam = orderByTypes.includes(orderBy) ? orderBy : 'createdDate';
+            if (sortParam === 'random') sortParam = 'createdDate';
+            return `${orderType === 'desc' ? '-' : ''}${sortParam}`;
+        };
+
+        const { page=1, pageSize=10, orderBy, orderType } = req.query;
+        const playlistsPage = await playlists.sort(getSortParam(orderBy, orderType))
+            .skip(pageSize * (page - 1)).limit(+pageSize);
+        
+        if (orderBy === 'random') shuffle(playlistsPage);
+        return res.send(playlistsPage);
+    }
 };
 
 const addPlaylist = async (req, res) => {
@@ -100,7 +133,7 @@ const updatePlaylist = async (req, res) => {
         title, tracks,
         playlistPicture: {
             format: 'jpg',
-            data: playlistPicture ? new Buffer(playlistPicture.data) : null
+            data: playlistPicture && playlistPicture.data ? new Buffer(playlistPicture.data) : null
         }
     }).exec();
 
@@ -108,42 +141,36 @@ const updatePlaylist = async (req, res) => {
 }
 
 const deletePlaylist = async (req, res) => {
-    const { username, trackId } = req.params;
+    const { username, playlistId } = req.params;
     const user = await User.findOne({ username });
     if (!user) {
         return res.status(404).json({ message: `No user registered with username ${username}` }); 
     }
 
-    const track = await Track.findById(trackId);
-    if (!track) {
-        return res.status(404).json({ message: `No track found with id ${trackId}` });
+    const playlist = await Playlist.findById(playlistId);
+    if (!playlist) {
+        return res.status(404).json({ message: `No playlist found with id ${playlistId}` });
     }
 
-    const trackIndex = user.tracks.indexOf(trackId);
-    if (trackIndex !== -1) {
-        user.tracks.splice(trackIndex, 1);
-        User.findOneAndUpdate({ username }, { tracks: user.tracks }, {}, err => {
-            if (err) res.status(500).json({ message: 'Error while deleting track' });
+    const playlistIndex = user.playlists.indexOf(playlistId);
+    if (playlistIndex !== -1) {
+        user.playlists.splice(playlistIndex, 1);
+        User.findOneAndUpdate({ username }, { playlists: user.playlists }, {}, err => {
+            if (err) res.status(500).json({ message: 'Error while deleting playlist' });
         });
     } else return;
 
-    if (track.usersLinks === 1) {
-        const gfs = new GridFS(mongoose.connection.db);
-        gfs.remove({ _id: track.trackId }, err => {
-            if (err) res.status(500).json({ message: 'Error while deleting track' });
-            else {
-                Track.findByIdAndRemove(trackId, err => {
-                    if (err) res.status(500).json({ message: 'Error while deleting track' });
-                    else res.json({ message: 'Successfully deleted', trackId  });
-                });
-            }
-        })
+    if (playlist.usersLinks === 1) {
+        Playlist.findByIdAndRemove(playlistId, err => {
+            if (err) res.status(500).json({ message: 'Error while deleting playlist' });
+            else res.json({ message: 'Successfully deleted', playlistId  });
+        });
     } else {
-        Track.findByIdAndUpdate(trackId, { $inc: { usersLinks: -1 } }, {}, err => {
+        Playlist.findByIdAndUpdate(playlistId, { $inc: { usersLinks: -1 } }, {}, err => {
             if (err) {
-                res.status(500).json({ message: `Error while deleting track` });
+                res.status(500).json({ message: `Error while deleting playlist` });
             } else {
-                res.json({ message: 'Successfully deleted', trackId });
+                res.json({ message: 'Successfully deleted', playlistId });
             }
         });
     }
@@ -185,5 +212,6 @@ const createPlaylist = async (req, res) => {
 
 module.exports = {
     getUserPlaylist, addPlaylist, updatePlaylist,
-    deletePlaylist, createPlaylist, getPlaylistTracks
+    deletePlaylist, createPlaylist, getPlaylistTracks,
+    getPlaylists
 };

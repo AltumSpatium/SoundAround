@@ -1,21 +1,21 @@
 .music-page {
 }
 
-.music-page__controls-panel {
+.controls-panel {
     padding: 5px;
     border: 1px solid lightgrey;
     border-radius: 5px;
     width: fit-content
 }
 
-.music-page__controls-panel > div {
+.controls-panel > div {
     margin-top: 5px;
-    width: 120px;
+    width: 140px;
 }
 
 button.sa-btn,
-.music-page__controls-panel .ant-select-selection {
-    width: 120px;
+.controls-panel .ant-select-selection {
+    width: 140px;
     height: 30px;
     background-color: #448AFF;
     color: white;
@@ -23,7 +23,7 @@ button.sa-btn,
 }
 
 button.sa-btn:focus,
-.music-page__controls-panel .ant-select-selection:focus {
+.controls-panel .ant-select-selection:focus {
     background-color: #1976D2;
     color: white;
     border-color: #1976D2;
@@ -31,14 +31,14 @@ button.sa-btn:focus,
 }
 
 button.sa-btn:hover,
-.music-page__controls-panel .ant-select-selection:hover {
+.controls-panel .ant-select-selection:hover {
     background-color: #1976D2;
     color: white;
     border-color: #1976D2;
     outline-color: #1976D2;
 }
 
-.music-page__controls-panel .ant-select-disabled > div {
+.controls-panel .ant-select-disabled > div {
     background-color: #BBDEFB !important;
     border-color: #BBDEFB !important;
     cursor: pointer;
@@ -48,7 +48,7 @@ button.sa-btn:hover,
     padding-left: 10px;
 }
 
-.music-page__controls-panel > div > span {
+.controls-panel > div > span {
     font-size: 13px;
 }
 
