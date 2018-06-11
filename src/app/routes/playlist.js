@@ -222,7 +222,7 @@ const createPlaylist = async (req, res) => {
         if (err) {
             res.status(500).json({ message: `Error while saving playlist` });
         } else {
-            res.json({ message: 'Successfully saved' });
+            res.json({ message: 'Successfully saved', playlistId: newPlaylist._id });
         }
     });
 };

@@ -118,6 +118,8 @@
 .playlist-view__playlist-info {
     max-width: 350px;
     font-size: 15px;
+    float: left;
+    margin-left: 5px;
 }
 
 .playlist-view__playlist-dates span {

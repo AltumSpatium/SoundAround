@@ -83,7 +83,7 @@ export const createPlaylist = (username, playlistData) => {
             body: JSON.stringify(playlistData)
         },
         requestAction: createPlaylistRequest,
-        successAction: createPlaylistSuccess,
+        successAction: successObj => createPlaylistSuccess(successObj.playlistId),
         failAction: createPlaylistFail,
         onFail: error => toastr.error('Error', error.message)
     });

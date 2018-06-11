@@ -54,6 +54,7 @@ class ImageUploader extends Component {
 
         return (
             <Upload
+                accept='image/*'
                 name={name}
                 listType={listType}
                 className={className}

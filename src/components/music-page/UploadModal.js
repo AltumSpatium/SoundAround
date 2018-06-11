@@ -31,7 +31,7 @@ const UploadModal = props => {
                 </ul>
             </div>
             <Upload.Dragger
-                fileList={fileList} onChange={onChangeUploadedFile}
+                fileList={fileList} onChange={onChangeUploadedFile} accept='audio/*'
                 name='audio' showUploadList={false} beforeUpload={() => false}>
                 {fileList && fileList.length ? 
                     <p className='upload-audiofile'>{fileList[0].name}</p> :
