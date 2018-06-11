@@ -84,6 +84,22 @@ const getPlaylists = async (req, res) => {
             .skip(pageSize * (page - 1)).limit(+pageSize);
         
         if (orderBy === 'random') shuffle(playlistsPage);
+        else if (orderBy === 'tracksCount') {
+            playlistsPage.sort((a, b) => b.tracks.length - a.tracks.length);
+        } else if (orderBy === 'duration') {
+            const calcDuration = arr => arr.reduce((p, c) => p + c.duration, 0);
+            const playlistDuration = {};
+            for (let playlist of playlistsPage) {
+                playlistDuration[playlist._id] = calcDuration(await Track.find({ _id: { $in: playlist.tracks } }));
+            }
+
+            playlistsPage.sort((a, b) => {
+                let durationA = playlistDuration[a._id];
+                let durationB = playlistDuration[b._id];
+                return durationB - durationA;
+            });
+        }
+
         return res.send(playlistsPage);
     }
 };
@@ -134,7 +150,8 @@ const updatePlaylist = async (req, res) => {
         playlistPicture: {
             format: 'jpg',
             data: playlistPicture && playlistPicture.data ? new Buffer(playlistPicture.data) : null
-        }
+        },
+        lastUpdatedDate: new Date()
     }).exec();
 
     return res.json({ message: 'Successfully updated' });

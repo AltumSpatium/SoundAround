@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
-import { Button, Select, Icon, List, Card, Spin } from 'antd';
+import { Button, Select, Icon, List, Spin } from 'antd';
 import InfiniteScroll from 'react-infinite-scroller';
 import Playlist from './Playlist';
 import DeletePlaylistModal from './DeletePlaylistModal';
+import PlaylistView from './PlaylistView';
 import { connect } from 'react-redux';
 import { sortOptions } from '../../constants/playlist';
 import {
-    getPlaylists, getPlaylistPage, deletePlaylist, clearPlaylist
+    getPlaylists, getPlaylistPage, deletePlaylist, clearPlaylist,
+    clearPlaylistPage
 } from '../../actions/playlist';
 
 import '../../styles/PlaylistsPage.css';
@@ -19,8 +21,8 @@ class PlaylistsPage extends Component {
             page: 1,
 
             sort: 'createdDate',
-            orderBy: '',
-            orderType: '',
+            orderBy: 'createdDate',
+            orderType: 'desc',
 
             openModal: false,
             deleteModal: false,
@@ -30,6 +32,7 @@ class PlaylistsPage extends Component {
 
         this.onChangeSort = this.onChangeSort.bind(this);
         this.loadMore = this.loadMore.bind(this);
+        this.loadMorePlaylists = this.loadMorePlaylists.bind(this);
         this.renderListItem = this.renderListItem.bind(this);
         this.createPlaylist = this.createPlaylist.bind(this);
         this.editPlaylist = this.editPlaylist.bind(this);
@@ -110,11 +113,23 @@ class PlaylistsPage extends Component {
         this.setState({ page: page + 1 });
     }
 
+    loadMorePlaylists(page) {
+        const { chosenPlaylist } = this.state;
+        const { getPlaylistPage, currentUser } = this.props;
+        if (!currentUser || !chosenPlaylist) return;
+        getPlaylistPage(currentUser.username, chosenPlaylist._id, page);
+    }
+
     renderListItem(playlist) {
+        const { currentUser } = this.props;
+
         return (
             <List.Item key={playlist._id}>
                 <Playlist
-                    playlist={playlist}
+                    playlist={playlist} userId={currentUser._id}
+                    onOpenClick={() => {
+                        this.setState({ chosenPlaylist: playlist }, () => this.showModal('openModal'));
+                    }}
                     onEditClick={() => this.editPlaylist(playlist._id)}
                     onDeleteClick={() => {
                         this.setState({ chosenPlaylist: playlist }, () => this.showModal('deleteModal'));
@@ -124,8 +139,11 @@ class PlaylistsPage extends Component {
     }
 
     render() {
-        const { sort, deleteModal, chosenPlaylist } = this.state;
-        const { playlists, loadingPlaylists, hasMorePlaylists } = this.props;
+        const { sort, deleteModal, openModal, chosenPlaylist } = this.state;
+        const {
+            playlists, loadingPlaylists, hasMorePlaylists, currentUser,
+            playlistTracks, playlistTracksLoading, playlistTracksHasMore
+        } = this.props;
 
         return (
             <div className="playlists-page">
@@ -173,6 +191,17 @@ class PlaylistsPage extends Component {
                     </div>
                 </div>
 
+                <PlaylistView
+                    isVisible={openModal} playlist={chosenPlaylist}
+                    onCloseView={() => {
+                        this.hideModal('openModal', () => {
+                            this.setState({ chosenPlaylist: null });
+                            this.props.clearPlaylistPage();
+                        });
+                    }}
+                    tracks={playlistTracks} loading={playlistTracksLoading} hasMore={playlistTracksHasMore}
+                    loadMore={page => this.loadMorePlaylists(page)} currentUser={currentUser} />
+
                 <DeletePlaylistModal
                     isVisible={deleteModal} playlist={chosenPlaylist}
                     onCancelDelete={() => {
@@ -200,7 +229,8 @@ const mapDispatchToProps = dispatch => ({
     },
     getPlaylistPage: (username, playlistId, page) => dispatch(getPlaylistPage(username, playlistId, page, 10)),
     deletePlaylist: (username, playlistId) => dispatch(deletePlaylist(username, playlistId)),
-    clearPlaylist: () => dispatch(clearPlaylist())
+    clearPlaylist: () => dispatch(clearPlaylist()),
+    clearPlaylistPage: () => dispatch(clearPlaylistPage())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PlaylistsPage);

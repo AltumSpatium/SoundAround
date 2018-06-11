@@ -100,3 +100,42 @@
     height: 148px;
     color: #448AFF;
 }
+
+.playlists-page__playlist-view__header {
+    position: relative;
+}
+
+.playlist-view__playlist-picture,
+.playlist-view__playlist-picture img {
+    width: 148px;
+    height: 148px;
+}
+
+.playlist-view__playlist-picture {
+    float: left;
+}
+
+.playlist-view__playlist-info {
+    max-width: 350px;
+    font-size: 15px;
+}
+
+.playlist-view__playlist-dates span {
+    font-weight: bold;
+}
+
+.playlist-view__tracks-info {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    color: white;
+}
+
+.playlist-view__tracks-info > span {
+    background-color: #448AFF;
+    margin: 0 5px;
+    padding: 6px;
+    font-size: 15px;
+    border-radius: 6px;
+    cursor: pointer;
+}

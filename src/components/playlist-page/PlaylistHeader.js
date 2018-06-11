@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { Button, Input } from 'antd';
 import MdMusicNote from 'react-icons/lib/md/music-note';

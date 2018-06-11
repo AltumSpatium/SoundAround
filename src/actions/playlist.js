@@ -5,7 +5,7 @@ import {
     CREATE_PLAYLIST_REQUEST, CREATE_PLAYLIST_SUCCESS, CREATE_PLAYLIST_FAIL,
     UPDATE_PLAYLIST_REQUEST, UPDATE_PLAYLIST_SUCCESS, UPDATE_PLAYLIST_FAIL,
     DELETE_PLAYLIST_REQUEST, DELETE_PLAYLIST_SUCCESS, DELETE_PLAYLIST_FAIL,
-    CLEAR_PLAYLIST, CLEAR_PLAYLISTS, SET_PLAYLIST_TRACKLIST
+    CLEAR_PLAYLIST, CLEAR_PLAYLIST_PAGE, SET_PLAYLIST_TRACKLIST
 } from '../constants/playlist';
 import {
     request, success, fail, callAPI
@@ -135,6 +135,10 @@ export const deletePlaylist = (username, playlistId) => {
 const clearPlaylistRequest = request(CLEAR_PLAYLIST);
 
 export const clearPlaylist = () => async dispatch => dispatch(clearPlaylistRequest());
+
+const clearPlaylistPageRequest = request(CLEAR_PLAYLIST_PAGE);
+
+export const clearPlaylistPage = () => async dispatch => dispatch(clearPlaylistPageRequest());
 
 const setPlaylistTracklistSuccess = success(SET_PLAYLIST_TRACKLIST);
 

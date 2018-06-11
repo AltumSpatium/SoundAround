@@ -13,20 +13,20 @@ const DeletePlaylistModal = props => {
     return (
         <Modal
             title='Delete playlist'
-                visible={isVisible}
-                onCancel={onCancelDelete}
-                onOk={onConfirmDelete}
-                width={400}
-                footer={[
-                    <div className='music-page__modal-btns' key='footer'>
-                        <Button className='sa-btn sa-btn-success' onClick={onCancelDelete}>Cancel</Button>
-                        <Button className='sa-btn sa-btn-error' onClick={onConfirmDelete}>Delete</Button>
-                    </div>
-                ]}>
-                <div className='music-page__delete-warning-text'>
-                    <p>Are you sure you want to delete <span>{playlist.title}</span> ?</p>
+            visible={isVisible}
+            onCancel={onCancelDelete}
+            onOk={onConfirmDelete}
+            width={400}
+            footer={[
+                <div className='music-page__modal-btns' key='footer'>
+                    <Button className='sa-btn sa-btn-success' onClick={onCancelDelete}>Cancel</Button>
+                    <Button className='sa-btn sa-btn-error' onClick={onConfirmDelete}>Delete</Button>
                 </div>
-            </Modal>
+            ]}>
+            <div className='music-page__delete-warning-text'>
+                <p>Are you sure you want to delete <span>{playlist.title}</span> ?</p>
+            </div>
+        </Modal>
     );
 }
 
