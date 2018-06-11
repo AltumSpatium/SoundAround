@@ -1,0 +1,189 @@
+.playlists-page {
+
+}
+
+.playlist-card {
+    position: relative;
+    cursor: pointer;
+}
+
+.playlist-card,
+.playlist-card .ant-card {
+    width: 150px;
+    height: 220px;
+}
+
+.playlist-card,
+.playlist-card .ant-card,
+.playlist-card .blackout {
+    border-radius: 6px;
+}
+
+.playlist-card .ant-card-cover,
+.playlist-card .ant-card-cover img {
+    height: 148px;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+}
+
+.blackout {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    opacity: 0;
+    transition: 0.2s ease-in-out;
+    z-index: 9;
+}
+
+.playlist-card:hover .blackout {
+    opacity: 1;
+    transition: 0.3s ease-in-out; 
+}
+
+.playlist-card .sa-btn {
+    position: absolute !important;
+    width: fit-content;
+    opacity: 0;
+    transition: 0.2s ease-in-out;
+    z-index: 10;
+}
+
+.playlist-card:hover .sa-btn {
+    opacity: 1;
+    transition: 0.3s ease-in-out;
+}
+
+.playlist-card .sa-btn:nth-child(3) {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.playlist-card .sa-btn:last-child,
+.playlist-card .sa-btn:nth-child(4) {
+    top: 0;
+    right: 0;
+    border-radius: 10px;
+    width: 30px;
+    text-align: center;
+    border: none;
+    background: none;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.playlist-card .sa-btn:last-child:hover,
+.playlist-card .sa-btn:nth-child(4):hover {
+    color: white;
+    transition: 0.2s ease;
+}
+
+.playlist-card .sa-btn:nth-child(4) {
+    right: 31px;
+}
+
+.playlist-card__playlist-title {
+    font-size: 18px;
+    color: black;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    height: 25px;
+    width: 100%;
+}
+
+.default-playlist-icon {
+    font-size: 90px;
+    text-align: center;
+    height: 148px;
+    color: #448AFF;
+}
+
+.playlists-page__playlist-view__header {
+    position: relative;
+}
+
+.playlist-view__playlist-picture,
+.playlist-view__playlist-picture img {
+    width: 148px;
+    height: 148px;
+}
+
+.playlist-view__playlist-picture {
+    float: left;
+}
+
+.playlist-view__playlist-info {
+    max-width: 350px;
+    font-size: 15px;
+}
+
+.playlist-view__playlist-dates span {
+    font-weight: bold;
+}
+
+.playlist-view__tracks-info {
+    position: absolute;
+    height: 29px;
+    bottom: 0;
+    right: 0;
+    color: white;
+}
+
+.playlist-view__tracks-info > span {
+    background-color: #448AFF;
+    margin: 0 5px;
+    padding: 6px;
+    font-size: 15px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.playlist-view .ant-modal-header {
+    background-color: #448AFF;
+}
+
+.playlist-view .ant-modal-close {
+    color: white;
+}
+
+.playlist-view .ant-modal-close:hover {
+    color: white;
+}
+
+.playlist-view__title {
+    font-size: 21px;
+    color: white;
+}
+
+.playlists-page__playlist-view__footer {
+    max-height: 300px;
+    overflow: auto;
+}
+
+.track-piece,
+.playlist-view__track-piece-wrapper {
+    width: 100%;
+}
+
+.playlist-view__track-piece-wrapper {
+    cursor: pointer;
+    border-radius: 6px;
+    padding: 1px;
+}
+
+.playlist-view__track-piece-wrapper:hover {
+    background-color: rgba(66, 134, 244, 0.4);
+    transition: 0.2s ease;
+}
+
+.playlist-view__no-tracks {
+    text-align: center;
+}
+
+.playlist-view__btn-listen {
+    position: absolute !important;
+    bottom: 0;
+}

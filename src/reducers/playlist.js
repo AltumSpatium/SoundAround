@@ -5,7 +5,7 @@ import {
     CREATE_PLAYLIST_REQUEST, CREATE_PLAYLIST_SUCCESS, CREATE_PLAYLIST_FAIL,
     UPDATE_PLAYLIST_REQUEST, UPDATE_PLAYLIST_SUCCESS, UPDATE_PLAYLIST_FAIL,
     DELETE_PLAYLIST_REQUEST, DELETE_PLAYLIST_SUCCESS, DELETE_PLAYLIST_FAIL,
-    CLEAR_PLAYLIST, SET_PLAYLIST_TRACKLIST
+    CLEAR_PLAYLIST, CLEAR_PLAYLIST_PAGE, SET_PLAYLIST_TRACKLIST
 } from '../constants/playlist';
 
 const initialState = {
@@ -39,6 +39,14 @@ const playlist = (state=initialState, action) => {
             return { ...state, tracks: playlistTracks, isFetching: false, hasMore: !!playlistPage.length };
         case GET_PLAYLIST_PAGE_FAIL:
             return { ...state, isFetching: false, hasMore: false };
+        case GET_PLAYLISTS_REQUEST:
+            return { ...state, loadingPlaylists: true };
+        case GET_PLAYLISTS_SUCCESS:
+            const playlistsPage = action.payload;
+            const playlists = state.playlists.concat(playlistsPage);
+            return { ...state, loadingPlaylists: false, hasMorePlaylists: !!playlistsPage.length, playlists };
+        case GET_PLAYLISTS_FAIL:
+            return { ...state, loadingPlaylists: false, hasMorePlaylists: false };
         case CREATE_PLAYLIST_REQUEST:
             return { ...state, saving: true };
         case CREATE_PLAYLIST_SUCCESS:
@@ -50,12 +58,16 @@ const playlist = (state=initialState, action) => {
         case UPDATE_PLAYLIST_FAIL:
             return { ...state, saving: false };
         case DELETE_PLAYLIST_REQUEST:
-            return { ...state, isFetching: true };
+            return state;
         case DELETE_PLAYLIST_SUCCESS:
+            const playlistId = action.payload;
+            return { ...state, playlists: state.playlists.filter(p => p._id !== playlistId) };
         case DELETE_PLAYLIST_FAIL:
-        return { ...state, isFetching: false };
+            return state;
         case CLEAR_PLAYLIST:
             return { ...initialState };
+        case CLEAR_PLAYLIST_PAGE:
+            return { ...state, tracks: [], isFetching: false, hasMore: true };
         case SET_PLAYLIST_TRACKLIST:
             const playlist = { ...state.playlist, tracks: action.payload.map(t => t._id) };
             return { ...state, tracks: action.payload, playlist };

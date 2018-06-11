@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { createAlbumCover, beautifyDuration } from '../../util/trackUtil';
+import { createPicture, beautifyDuration } from '../../util/trackUtil';
 
 class TrackPiece extends Component {
     constructor(props) {
         super(props);
 
         if (!this.albumCover) {
-            this.albumCover = createAlbumCover(props.track.picture);
+            this.albumCover = createPicture(props.track.picture);
         }
     }
 

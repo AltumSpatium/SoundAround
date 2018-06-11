@@ -7,8 +7,12 @@ export const beautifyDuration = duration => {
     return `${minutes}:${seconds}`;
 };
 
-export const createAlbumCover = picture => {
-    if (!picture) return <div className='default-album-cover'><TiNotes /></div>;
+export const createPicture = (picture, defaultPicture) => {
+    if (!picture || !picture.data) {
+        defaultPicture = defaultPicture || <div className='default-album-cover'><TiNotes /></div>;
+        return defaultPicture;
+    }
+
     const rawPicture = new Buffer(picture.data.data);
     return (
         <img src={`data:image/jpeg;base64,${rawPicture.toString('base64')}`} alt='Album cover' />

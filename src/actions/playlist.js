@@ -5,7 +5,7 @@ import {
     CREATE_PLAYLIST_REQUEST, CREATE_PLAYLIST_SUCCESS, CREATE_PLAYLIST_FAIL,
     UPDATE_PLAYLIST_REQUEST, UPDATE_PLAYLIST_SUCCESS, UPDATE_PLAYLIST_FAIL,
     DELETE_PLAYLIST_REQUEST, DELETE_PLAYLIST_SUCCESS, DELETE_PLAYLIST_FAIL,
-    CLEAR_PLAYLIST, SET_PLAYLIST_TRACKLIST
+    CLEAR_PLAYLIST, CLEAR_PLAYLIST_PAGE, SET_PLAYLIST_TRACKLIST
 } from '../constants/playlist';
 import {
     request, success, fail, callAPI
@@ -48,6 +48,25 @@ export const getPlaylistPage = (username, playlistId, page, pageSize) => {
     });
 };
 
+const getPlaylistsRequest = request(GET_PLAYLISTS_REQUEST);
+const getPlaylistsSuccess = success(GET_PLAYLISTS_SUCCESS);
+const getPlaylistsFail = fail(GET_PLAYLISTS_FAIL);
+
+export const getPlaylists = (username, page, pageSize, orderBy, orderType) => {
+    return callAPI({
+        url: `/api/playlists/${username}?page=${page}&pageSize=${pageSize}&` + 
+            `orderBy=${orderBy}&orderType=${orderType}`,
+        params: {
+            headers: {
+                'x-access-token': localStorage.getItem('sa_token')
+            }
+        },
+        requestAction: getPlaylistsRequest,
+        successAction: getPlaylistsSuccess,
+        failAction: getPlaylistsFail
+    });
+};
+
 const createPlaylistRequest = request(CREATE_PLAYLIST_REQUEST);
 const createPlaylistSuccess = success(CREATE_PLAYLIST_SUCCESS);
 const createPlaylistFail = fail(CREATE_PLAYLIST_FAIL);
@@ -71,8 +90,8 @@ export const createPlaylist = (username, playlistData) => {
 };
 
 const updatePlaylistRequest = request(UPDATE_PLAYLIST_REQUEST);
-const updatePlaylistSuccess = request(UPDATE_PLAYLIST_SUCCESS);
-const updatePlaylistFail = request(UPDATE_PLAYLIST_FAIL);
+const updatePlaylistSuccess = success(UPDATE_PLAYLIST_SUCCESS);
+const updatePlaylistFail = fail(UPDATE_PLAYLIST_FAIL);
 
 export const updatePlaylist = (playlistId, playlistData) => {
     return callAPI({
@@ -92,11 +111,34 @@ export const updatePlaylist = (playlistId, playlistData) => {
     });
 };
 
+const deletePlaylistRequest = request(DELETE_PLAYLIST_REQUEST);
+const deletePlaylistSuccess = success(DELETE_PLAYLIST_SUCCESS);
+const deletePlaylistFail = fail(DELETE_PLAYLIST_FAIL);
+
+export const deletePlaylist = (username, playlistId) => {
+    return callAPI({
+        url: `/api/playlists/music/${username}/${playlistId}`,
+        params: {
+            headers: {
+                'x-access-token': localStorage.getItem('sa_token')
+            },
+            method: 'DELETE'
+        },
+        requestAction: deletePlaylistRequest,
+        successAction: successObj => deletePlaylistSuccess(successObj.playlistId),
+        failAction: deletePlaylistFail,
+        onSuccess: json => toastr.success(json.message),
+        onFail: error => toastr.error('Error', error.message)
+    });
+};
+
 const clearPlaylistRequest = request(CLEAR_PLAYLIST);
 
-export const clearPlaylist = () => async dispatch => {
-    return dispatch(clearPlaylistRequest());
-};
+export const clearPlaylist = () => async dispatch => dispatch(clearPlaylistRequest());
+
+const clearPlaylistPageRequest = request(CLEAR_PLAYLIST_PAGE);
+
+export const clearPlaylistPage = () => async dispatch => dispatch(clearPlaylistPageRequest());
 
 const setPlaylistTracklistSuccess = success(SET_PLAYLIST_TRACKLIST);
 

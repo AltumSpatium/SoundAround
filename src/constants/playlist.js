@@ -1,3 +1,6 @@
+import React from 'react';
+import * as QueueMusic from 'react-icons/lib/md/queue-music';
+
 export const GET_PLAYLIST_REQUEST = 'GET_PLAYLIST_REQUEST';
 export const GET_PLAYLIST_SUCCESS = 'GET_PLAYLIST_SUCCESS';
 export const GET_PLAYLIST_FAIL = 'GET_PLAYLIST_FAIL';
@@ -11,9 +14,11 @@ export const GET_PLAYLIST_PAGE_SUCCESS = 'GET_PLAYLIST_PAGE_SUCCESS';
 export const GET_PLAYLIST_PAGE_FAIL = 'GET_PLAYLIST_PAGE_FAIL';
 
 export const CLEAR_PLAYLIST = 'CLEAR_PLAYLIST';
+export const CLEAR_PLAYLIST_PAGE = 'CLEAR_PLAYLIST_PAGE';
 
 export const sortOptions = [
-    { title: 'By default', value: 'uploadDate' },
+    { title: 'By default', value: 'createdDate' },
+    { title: 'By update date', value: 'lastUpdatedDate' },
     { title: 'By title', value: 'title' },
     { title: 'By duration', value: 'duration' },
     { title: 'By tracks count', value: 'tracksCount' },
@@ -34,3 +39,5 @@ export const DELETE_PLAYLIST_SUCCESS = 'DELETE_PLAYLIST_SUCCESS';
 export const DELETE_PLAYLIST_FAIL = 'DELETE_PLAYLIST_FAIL';
 
 export const SET_PLAYLIST_TRACKLIST = 'SET_PLAYLIST_TRACKLIST';
+
+export const defaultPlaylistPicture = <div className="default-playlist-icon"><QueueMusic /></div>;
