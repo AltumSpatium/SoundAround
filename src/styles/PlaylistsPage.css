@@ -126,6 +126,7 @@
 
 .playlist-view__tracks-info {
     position: absolute;
+    height: 29px;
     bottom: 0;
     right: 0;
     color: white;
@@ -138,4 +139,51 @@
     font-size: 15px;
     border-radius: 6px;
     cursor: pointer;
+}
+
+.playlist-view .ant-modal-header {
+    background-color: #448AFF;
+}
+
+.playlist-view .ant-modal-close {
+    color: white;
+}
+
+.playlist-view .ant-modal-close:hover {
+    color: white;
+}
+
+.playlist-view__title {
+    font-size: 21px;
+    color: white;
+}
+
+.playlists-page__playlist-view__footer {
+    max-height: 300px;
+    overflow: auto;
+}
+
+.track-piece,
+.playlist-view__track-piece-wrapper {
+    width: 100%;
+}
+
+.playlist-view__track-piece-wrapper {
+    cursor: pointer;
+    border-radius: 6px;
+    padding: 1px;
+}
+
+.playlist-view__track-piece-wrapper:hover {
+    background-color: rgba(66, 134, 244, 0.4);
+    transition: 0.2s ease;
+}
+
+.playlist-view__no-tracks {
+    text-align: center;
+}
+
+.playlist-view__btn-listen {
+    position: absolute !important;
+    bottom: 0;
 }

@@ -192,7 +192,7 @@ class PlaylistsPage extends Component {
                 </div>
 
                 <PlaylistView
-                    isVisible={openModal} playlist={chosenPlaylist}
+                    isVisible={openModal} playlist={chosenPlaylist} editPlaylist={this.editPlaylist}
                     onCloseView={() => {
                         this.hideModal('openModal', () => {
                             this.setState({ chosenPlaylist: null });

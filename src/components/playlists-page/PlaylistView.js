@@ -6,6 +6,7 @@ import { createPicture, beautifyDuration } from '../../util/trackUtil';
 import { defaultPlaylistPicture } from '../../constants/playlist';
 import * as MdAccessTime from 'react-icons/lib/md/access-time';
 import * as MdMusicNote from 'react-icons/lib/md/music-note';
+import TrackPiece from '../shared/TrackPiece';
 
 class PlaylistView extends Component {
     constructor(props) {
@@ -17,6 +18,7 @@ class PlaylistView extends Component {
 
         this.loadMore = this.loadMore.bind(this);
         this.renderListItem = this.renderListItem.bind(this);
+        this.listenPlaylist = this.listenPlaylist.bind(this);
     }
 
     loadMore() {
@@ -28,34 +30,40 @@ class PlaylistView extends Component {
     renderListItem(track) {
         return (
             <List.Item key={track._id}>
-                {track.artist} - {track.title}
+                <div className="playlist-view__track-piece-wrapper">
+                    <TrackPiece track={track} />
+                </div>
             </List.Item>
         );
     }
 
     componentWillReceiveProps(nextProps) {
-        if (this.props.playlist && !nextProps.playlist) {
-            this.setState({ page: 1 });
-        }
-
         if (!this.props.isVisible && nextProps.isVisible) {
             this.loadMore();
         }
     }
 
+    listenPlaylist() {
+
+    }
+
     render() {
         const {
             onCloseView, isVisible, tracks, loading, hasMore,
-            currentUser
+            currentUser, editPlaylist
         } = this.props;
         const playlist = this.props.playlist || {};
 
         const tracksCount = tracks.length;
         const totalDuration = beautifyDuration(tracks.reduce((p, c) => p + c.duration, 0));
 
+        const onAddClick = () => editPlaylist(playlist._id);
+
         return (
             <Modal
-                title={playlist.title}
+                wrapClassName='playlist-view'
+                afterClose={() => this.setState({ page: 1 })}
+                title={<div className='playlist-view__title'>{playlist.title}</div>}
                 style={{ top: 20 }}
                 width={600}
                 onCancel={onCloseView}
@@ -76,7 +84,9 @@ class PlaylistView extends Component {
                                     </div>
                                 )}
                                 {!loading && !hasMore && !tracks.length && (
-                                    <div className='music-page__no-tracks'>No tracks</div>
+                                    <div className='playlist-view__no-tracks'>
+                                        <Button onClick={onAddClick} className='sa-btn'>Add tracks</Button>
+                                    </div>
                                 )}
                             </List>
                         </InfiniteScroll>
@@ -94,7 +104,7 @@ class PlaylistView extends Component {
                             <div><span>Created:</span> {moment(playlist.createdDate).format('DD.MM.YYYY')}</div>
                             <div><span>Updated:</span> {moment(playlist.lastUpdatedDate).format('DD.MM.YYYY')}</div>
                         </div>
-
+                        <Button onClick={this.listenPlaylist} className='sa-btn playlist-view__btn-listen'>Listen</Button>
                         <div className="playlist-view__tracks-info">
                             {
                                 <span title={`Tracks count: ${tracksCount}`}>
