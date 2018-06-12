@@ -6,12 +6,14 @@ import auth from './auth';
 import user from './user';
 import music from './music';
 import playlist from './playlist';
+import room from './room';
 
 export default combineReducers({
     auth,
     user,
     music,
     playlist,
+    room,
     routing: routerReducer,
     toastr: toastrReducer,
     loadingBar: loadingBarReducer

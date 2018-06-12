@@ -29,6 +29,9 @@ const {
     getUserPlaylist, createPlaylist, getPlaylistTracks,
     updatePlaylist, getPlaylists, deletePlaylist
 } = require('./src/app/routes/playlist');
+const {
+    getRoomsPage, createRoom 
+} = require('./src/app/routes/room');
 
 const app = new Express();
 const port = process.env.PORT || 8000;
@@ -65,6 +68,12 @@ app.route('/api/playlists/music/:username/:playlistId')
 app.route('/api/playlists/:username')
     .get(verifyAuth, verifyUser, getPlaylists)
     .post(verifyAuth, verifyUser, createPlaylist);
+
+app.route('/api/rooms/list')
+    .get(verifyAuth, getRoomsPage);
+
+app.route('/api/rooms/:username')
+    .post(verifyAuth, verifyUser, createRoom);
 
 app.get('/*', (req, res) => {
     res.sendFile(path.join(__dirname, '/build/index.html'));

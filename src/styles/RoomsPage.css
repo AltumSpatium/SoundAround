@@ -1,6 +1,6 @@
 .rooms-main {
     background-color: #eaf2ff;
-    height: 500px;
+    height: 550px;
     border-radius: 5px;
 }
 
@@ -10,7 +10,8 @@
 }
 
 .rooms-list {
-    margin-top: 10px;
+    margin-top: 15px;
+    padding: 0 6px;
 }
 
 .room-card {
@@ -19,17 +20,72 @@
     padding: 3px;
     height: 40px;
     border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+}
+
+.room-card:hover {
+    background-color: rgb(25, 118, 210, 0.4);
+    transition: 0.2s ease;
+}
+
+.room-card:active {
+    background-color: rgb(25, 118, 210, 0.6);
+    transition: 0.2s ease;
+}
+
+.room-card-active {
+    background-color: rgb(25, 118, 210, 0.6) !important;
+    transition: 0.2s ease; 
 }
 
 .room-name {
-    float: left;
+    position: absolute;
     font-size: 21px;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
-.room-users{ 
-    float: right;
+.room-users { 
+    position: absolute;
     font-size: 15px;
-    margin-right: 20px;
+    right: 50px;
+    top: 50%;
+}
+
+.room-card-delete {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 10px;
+    padding-left: 7px;
+    padding-top: 3px;
+    background: rgb(25, 118, 210, 0.4);
+    color: white;
+    border: none;
+    margin: 0 2px;
+    font-size: 16px;
+    width: 30px;
+    height: 30px;
+    border-radius: 12px;
+    transition: 0.2s ease;    
+    z-index: 5;
+    opacity: 0;
+}
+
+.room-card-delete:hover {
+    background-color: rgb(25, 118, 210, 0.7);
+    transition: 0.2s ease;
+}
+
+.room-card-delete:active {
+    background-color: rgb(25, 118, 210, 0.9);
+    transition: 0.2s ease;
+}
+
+.room-card:hover .room-card-delete {
+    opacity: 1;
+    transition: 0.2s ease;
 }
 
 .active {
@@ -68,10 +124,33 @@
     font-weight: bold;
 }
 
-.search-bar {
-    width: 400px !important;
-    margin-top: 5px !important;
-    margin-left: 50% !important;
-    transform: translateX(-50%);
+.room-main__header {
+    position: relative;
+    width: 100%;
+    height: 42px;
+}
 
+.room-main__header__search-bar {
+    width: 500px;
+}
+
+.room-main__header__search-bar .ant-input {
+    width: 400px !important;
+    margin-left: 6px !important;
+    margin-top: 5px !important;
+    height: 40px;
+
+}
+
+.room-main__header__search-bar .ant-btn {
+    margin-left: 6px !important;
+    height: 40px;
+    line-height: 38px;
+}
+
+.btn-create {
+    position: absolute !important;
+    height: 38px !important;
+    top: 6px;
+    right: 6px;
 }

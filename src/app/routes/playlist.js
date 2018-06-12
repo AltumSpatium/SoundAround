@@ -11,7 +11,6 @@ const Playlist = require('../models/Playlist');
 
 const { decodeToken } = require('./auth');
 
-const urlExample = '/api/playlists/list/alex/123?pageSize=20&page=2';
 const orderByTypes = ['createdDate', 'lastUpdatedDate', 'tracksCount', 'duration', 'title', 'random'];
 
 const getPlaylistTracks = async (req, res) => {
@@ -80,27 +79,33 @@ const getPlaylists = async (req, res) => {
         };
 
         const { page=1, pageSize=10, orderBy, orderType } = req.query;
-        const playlistsPage = await playlists.sort(getSortParam(orderBy, orderType))
-            .skip(pageSize * (page - 1)).limit(+pageSize);
-        
-        if (orderBy === 'random') shuffle(playlistsPage);
-        else if (orderBy === 'tracksCount') {
-            playlistsPage.sort((a, b) => b.tracks.length - a.tracks.length);
+        if (orderBy === 'tracksCount') {
+            const allPlaylists = await playlists;
+            allPlaylists.sort((a, b) => b.tracks.length - a.tracks.length);
+            const skipIndex = pageSize * (page - 1);
+            const playlistsPage = allPlaylists.slice(skipIndex, skipIndex + pageSize);
+            return res.send(playlistsPage);
         } else if (orderBy === 'duration') {
+            const allPlaylists = await playlists;
             const calcDuration = arr => arr.reduce((p, c) => p + c.duration, 0);
             const playlistDuration = {};
-            for (let playlist of playlistsPage) {
+            for (let playlist of allPlaylists) {
                 playlistDuration[playlist._id] = calcDuration(await Track.find({ _id: { $in: playlist.tracks } }));
             }
-
-            playlistsPage.sort((a, b) => {
+            allPlaylists.sort((a, b) => {
                 let durationA = playlistDuration[a._id];
                 let durationB = playlistDuration[b._id];
                 return durationB - durationA;
             });
+            const skipIndex = pageSize * (page - 1);
+            const playlistsPage = allPlaylists.slice(skipIndex, skipIndex + pageSize);
+            return res.send(playlistsPage);
+        } else {
+            const playlistsPage = await playlists.sort(getSortParam(orderBy, orderType))
+                .skip(pageSize * (page - 1)).limit(+pageSize);
+            if (orderBy === 'random') shuffle(playlistsPage);
+            return res.send(playlistsPage);
         }
-
-        return res.send(playlistsPage);
     }
 };
 

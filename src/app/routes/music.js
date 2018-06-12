@@ -11,7 +11,6 @@ GridFS.mongo = mongoose.mongo;
 const User = require('../models/User');
 const Track = require('../models/Track');
 
-const urlExample = '/api/music/list/alex?pageSize=20&page=2&orderBy=uploadDate&orderType=asc';
 const orderByTypes = ['uploadDate', 'title', 'artist', 'random'];
 
 const saveAudio = (filePath, user) => {
