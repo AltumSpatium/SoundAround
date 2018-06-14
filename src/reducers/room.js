@@ -9,7 +9,9 @@ import {
 const initialState = {
     rooms: [],
     hasMore: true,
-    loading: false
+    loading: false,
+
+    creatingRoom: false
 };
 
 const room = (state=initialState, action) => {
@@ -22,6 +24,14 @@ const room = (state=initialState, action) => {
             return { ...state, loading: false, rooms, hasMore: !!roomsPage.length };
         case GET_ROOMS_FAIL:
             return { ...state, loading: false, hasMore: false };
+        case CREATE_ROOM_REQUEST:
+            return { ...state, creatingRoom: true };
+        case CREATE_ROOM_SUCCESS:
+            return { ...state, creatingRoom: false };
+        case CREATE_ROOM_FAIL:
+            return { ...state, creatingRoom: false };
+        case CLEAR_ROOMS:
+            return initialState;
         default:
             return state;
     }

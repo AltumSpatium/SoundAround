@@ -4,6 +4,10 @@
     border-radius: 5px;
 }
 
+.btn-create {
+    width: 110px !important;
+}
+
 .room-info {
     background-color: #eaf2ff;
     border-radius: 5px;
@@ -44,6 +48,11 @@
     font-size: 21px;
     top: 50%;
     transform: translateY(-50%);
+    max-width: 350px;
+    height: 30px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .room-users { 
@@ -93,13 +102,13 @@
 }
 
 .info-header {
-    height: 35px;
 }
 
 .info-header > span {
     float: left;
     margin: 3px;
     font-size: 27px;
+    max-width: 64%;
 }
 
 .info-header .ant-btn {
@@ -134,7 +143,7 @@
     width: 500px;
 }
 
-.room-main__header__search-bar .ant-input {
+.room-main__header__search-bar .ant-input-affix-wrapper {
     width: 400px !important;
     margin-left: 6px !important;
     margin-top: 5px !important;
@@ -153,4 +162,39 @@
     height: 38px !important;
     top: 6px;
     right: 6px;
+}
+
+.music-page__edit-fields .ant-select {
+    width: 100% !important;
+}
+
+.music-page__edit-fields .ant-select-selection,
+.music-page__edit-fields .ant-select-selection__rendered {
+    height: 40px;
+}
+
+.music-page__edit-fields .ant-select-selection__rendered {
+    padding-top: 6px;
+}
+
+.ant-select-dropdown {
+    z-index: 9999 !important;
+}
+
+.create-playlist-select-option img,
+.create-playlist-select-option .default-playlist-icon {
+    width: 25px;
+    height: 25px;
+    float: left;
+    margin-right: 5px;
+    font-size: 20px;
+}
+
+.create-playlist-select-option > span {
+    float: left;
+}
+
+.search-cross {
+    font-size: 16px;
+    cursor: pointer;
 }

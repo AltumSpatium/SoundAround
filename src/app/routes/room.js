@@ -15,6 +15,8 @@ const getRoomsPage = async (req, res) => {
     const search = req.query.search;
     let rooms;
 
+    console.log(search);
+
     if (search) {
         rooms = Room.find({ name: { $regex: search, $options: 'i' } }).select('-messages');
     } else {
@@ -40,7 +42,36 @@ const getRoomsPage = async (req, res) => {
 };
 
 const createRoom = async (req, res) => {
+    const { username } = req.params;
+    const user = await User.findOne({ username });
+    if (!user) {
+        return res.status(404).json({ message: `No user registered with username ${username}` });
+    }
 
+    const { name, description, public, password, currentPlaylist, nowPlaying } = req.body;
+
+    const room = await Room.findOne({ name });
+    if (room) {
+        return res.status(403).json({ message: `Name '${name}' is already taken ` });
+    }
+
+    const newRoom = new Room({
+        name, description, public, password, currentPlaylist,
+        authorId: user._id,
+        nowPlaying: nowPlaying ? nowPlaying : null,
+        usersOnline: [],
+        messages: []
+    });
+
+    user.rooms.push(newRoom._id);
+    User.findOneAndUpdate({ username }, { rooms: user.rooms }, {}).exec();
+    newRoom.save((err, savedRoom) => {
+        if (err) {
+            res.status(500).json({ message: `Error while creating room` });
+        } else {
+            res.json({ message: 'Successfully created', roomId: savedRoom._id });
+        }
+    });
 };
 
 const updateRoom = async (req, res) => {

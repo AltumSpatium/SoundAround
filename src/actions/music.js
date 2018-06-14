@@ -1,5 +1,6 @@
 import {
     GET_MUSIC_PAGE_REQUEST, GET_MUSIC_PAGE_SUCCESS, GET_MUSIC_PAGE_FAIL,
+    GET_TRACK_REQUEST, GET_TRACK_SUCCESS, GET_TRACK_FAIL,
     UPLOAD_TRACK_REQUEST, UPLOAD_TRACK_SUCCESS, UPLOAD_TRACK_FAIL,
     UPDATE_TRACK_REQUEST, UPDATE_TRACK_SUCCESS, UPDATE_TRACK_FAIL,
     DELETE_TRACK_REQUEST, DELETE_TRACK_SUCCESS, DELETE_TRACK_FAIL,
@@ -26,6 +27,24 @@ export const getMusicPage = (username, page, pageSize, orderBy, orderType) => {
         requestAction: getMusicPageRequest,
         successAction: getMusicPageSuccess,
         failAction: getMusicPageFail
+    });
+};
+
+const getTrackRequest = request(GET_TRACK_REQUEST);
+const getTrackSuccess = success(GET_TRACK_SUCCESS);
+const getTrackFail = fail(GET_TRACK_FAIL);
+
+export const getTrack = (trackId, onlyInfo) => {
+    return callAPI({
+        url: `/api/music/track/${trackId}?onlyInfo=${+onlyInfo}`,
+        params: {
+            headers: {
+                'x-access-token': localStorage.getItem('sa_token')
+            }
+        },
+        requestAction: getTrackRequest,
+        successAction: getTrackSuccess,
+        failAction: getTrackFail
     });
 };
 

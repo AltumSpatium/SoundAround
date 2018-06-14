@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import InfiniteList from '../shared/InifiniteList';
 import Room from './Room';
 import RoomInfo from './RoomInfo';
+import CreateRoomModal from './CreateRoomModal';
 import { Button, Input, Tabs } from 'antd';
 import { getRooms, clearRooms } from '../../actions/room';
 
@@ -15,12 +16,15 @@ class RoomsPage extends Component {
         this.state = {
             page: 1,
 
-            showRoomInfo: false,
+            activeTab: '1',
+
+            search: '',
 
             createModal: false,
             deleteModal: false,
             passwordModal: false,
-            chosenRoom: null
+            chosenRoom: null,
+            roomToDelete: null
         };
 
         this.loadMore = this.loadMore.bind(this);
@@ -29,6 +33,17 @@ class RoomsPage extends Component {
         this.showInfo = this.showInfo.bind(this);
         this.hideInfo = this.hideInfo.bind(this);
         this.onKeyUp = this.onKeyUp.bind(this);
+        this.createRoom = this.createRoom.bind(this);
+        this.deleteRoom = this.deleteRoom.bind(this);
+        this.onChange = this.onChange.bind(this);
+        this.clearSearch = this.clearSearch.bind(this);
+        this.loadRoomsPage = this.loadRoomsPage.bind(this);
+    }
+
+    onChange(e) {
+        const target = e.target;
+        const { name, value } = target;
+        this.setState({ [name]: value });
     }
 
     componentDidMount() {
@@ -40,7 +55,7 @@ class RoomsPage extends Component {
     }
 
     hideInfo() {
-        this.setState({ chosenRoom: null, showRoomInfo: false });
+        this.setState({ chosenRoom: null });
     }
 
     componentWillUnmount() {
@@ -59,8 +74,13 @@ class RoomsPage extends Component {
     showModal = (modalName, cb) => this.setState({ [modalName]: true }, cb ? cb : () => {})
 
     loadMore() {
+        const { search } = this.state;
+        this.loadRoomsPage(search);
+    }
+
+    loadRoomsPage(search) {
         const { page } = this.state;
-        this.props.getRooms(page, 15);
+        this.props.getRooms(page, 15, search);
         this.setState({ page: page + 1 });
     }
 
@@ -76,15 +96,35 @@ class RoomsPage extends Component {
 
     isRoomAuthor(room) {
         const { currentUser } = this.props;
+        if (!currentUser) return false;
         return room.authorId == currentUser._id;
     }
 
     showInfo(room) {
-        this.setState({ chosenRoom: room, showRoomInfo: true });
+        this.setState({ chosenRoom: room });
+    }
+
+    createRoom() {
+        this.hideModal('createModal');
+        this.clearRooms().then(this.loadMore);
+        // this.setState({ page: 1 }, () => {
+        //     this.props.clearRooms().then(this.loadMore);
+        // });
+    }
+
+    deleteRoom(roomId) {
+
+    }
+
+    clearRooms = async () => this.setState({ page: 1 }, this.props.clearRooms)
+
+    clearSearch() {
+        this.setState({ search: '' });
+        this.clearRooms();
     }
 
     render() {
-        const { showRoomInfo, chosenRoom } = this.state;
+        const { chosenRoom, createModal, search, activeTab } = this.state;
         const { rooms, loading, hasMore, currentUser } = this.props;
         const userRooms = rooms.filter(this.isRoomAuthor);
 
@@ -96,13 +136,26 @@ class RoomsPage extends Component {
                         <div className="rooms-main">
                             <div className="room-main__header">
                                 <div className="room-main__header__search-bar">
-                                    <Input />
-                                    <Button>Search</Button>
+                                    <Input
+                                        onChange={this.onChange} name='search' value={search}
+                                        suffix={search ?
+                                            <span
+                                                onClick={this.clearSearch} className='search-cross'>
+                                                ×
+                                            </span>
+                                            : null
+                                        }
+                                        onPressEnter={this.clearRooms} />
+                                    <Button onClick={this.clearRooms}>Search</Button>
                                 </div>
-                                <Button className='sa-btn sa-btn-success btn-create'>Create room</Button>
+                                <Button
+                                    className='sa-btn sa-btn-success btn-create'
+                                    onClick={() => this.showModal('createModal')}>
+                                    Create room
+                                </Button>
                             </div>                            
                             <div className="rooms-list">
-                                <Tabs defaultActiveKey='1'>
+                                <Tabs activeKey={activeTab} onChange={activeTab => this.setState({ activeTab })}>
                                     <Tabs.TabPane tab='All rooms' key='1'>
                                         <InfiniteList
                                             hasMore={hasMore} loading={loading} loadMore={this.loadMore}
@@ -120,10 +173,15 @@ class RoomsPage extends Component {
                         </div>
                     </div>
                     <div className="col-md-4">
-                        {showRoomInfo && <RoomInfo room={chosenRoom} />}
+                        <RoomInfo room={chosenRoom} />
                     </div>
                     <div className="col-md-1"></div>
                 </div>
+
+                <CreateRoomModal
+                    isVisible={createModal}
+                    onCancelCreate={() => this.hideModal('createModal')}
+                    onClickCreate={this.createRoom}/>
             </div>
         );
     }
@@ -137,7 +195,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-    getRooms: (page, pageSize) => dispatch(getRooms(page, pageSize)),
+    getRooms: (page, pageSize, search) => dispatch(getRooms(page, pageSize, search)),
     clearRooms: () => dispatch(clearRooms())
 });
 
