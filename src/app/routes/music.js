@@ -11,7 +11,6 @@ GridFS.mongo = mongoose.mongo;
 const User = require('../models/User');
 const Track = require('../models/Track');
 
-const urlExample = '/api/music/list/alex?pageSize=20&page=2&orderBy=uploadDate&orderType=asc';
 const orderByTypes = ['uploadDate', 'title', 'artist', 'random'];
 
 const saveAudio = (filePath, user) => {
@@ -84,7 +83,18 @@ const getUserMusic = async (req, res) => {
 };
 
 const getTrack = async (req, res) => {
+    const { trackId } = req.params;
+    const track = await Track.findById(trackId);
+    if (!track) {
+        return res.status(404).json({ message: `No track found with id ${trackId}` });
+    }
 
+    const { onlyInfo } = req.query;
+    if (onlyInfo == 1) {
+        return res.send(track);
+    } else {
+
+    }
 };
 
 const addTrack = async (req, res) => {

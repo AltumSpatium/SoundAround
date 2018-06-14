@@ -1,7 +1,11 @@
 .rooms-main {
     background-color: #eaf2ff;
-    height: 500px;
+    height: 550px;
     border-radius: 5px;
+}
+
+.btn-create {
+    width: 110px !important;
 }
 
 .room-info {
@@ -10,7 +14,8 @@
 }
 
 .rooms-list {
-    margin-top: 10px;
+    margin-top: 15px;
+    padding: 0 6px;
 }
 
 .room-card {
@@ -19,17 +24,77 @@
     padding: 3px;
     height: 40px;
     border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+}
+
+.room-card:hover {
+    background-color: rgb(25, 118, 210, 0.4);
+    transition: 0.2s ease;
+}
+
+.room-card:active {
+    background-color: rgb(25, 118, 210, 0.6);
+    transition: 0.2s ease;
+}
+
+.room-card-active {
+    background-color: rgb(25, 118, 210, 0.6) !important;
+    transition: 0.2s ease; 
 }
 
 .room-name {
-    float: left;
+    position: absolute;
     font-size: 21px;
+    top: 50%;
+    transform: translateY(-50%);
+    max-width: 350px;
+    height: 30px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
-.room-users{ 
-    float: right;
+.room-users { 
+    position: absolute;
     font-size: 15px;
-    margin-right: 20px;
+    right: 50px;
+    top: 50%;
+}
+
+.room-card-delete {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 10px;
+    padding-left: 7px;
+    padding-top: 3px;
+    background: rgb(25, 118, 210, 0.4);
+    color: white;
+    border: none;
+    margin: 0 2px;
+    font-size: 16px;
+    width: 30px;
+    height: 30px;
+    border-radius: 12px;
+    transition: 0.2s ease;    
+    z-index: 5;
+    opacity: 0;
+}
+
+.room-card-delete:hover {
+    background-color: rgb(25, 118, 210, 0.7);
+    transition: 0.2s ease;
+}
+
+.room-card-delete:active {
+    background-color: rgb(25, 118, 210, 0.9);
+    transition: 0.2s ease;
+}
+
+.room-card:hover .room-card-delete {
+    opacity: 1;
+    transition: 0.2s ease;
 }
 
 .active {
@@ -37,13 +102,13 @@
 }
 
 .info-header {
-    height: 35px;
 }
 
 .info-header > span {
     float: left;
     margin: 3px;
     font-size: 27px;
+    max-width: 64%;
 }
 
 .info-header .ant-btn {
@@ -61,17 +126,111 @@
     margin-top: 15px;
     padding: 5px;
     font-size: 18px;
+}
+
+.now-playing-loading {
+    text-align: center;
+}
+
+.now-playing .track-piece-wrapper {
+    cursor: pointer;
+}
+
+.room-main__header {
+    position: relative;
+    width: 100%;
+    height: 42px;
+}
+
+.room-main__header__search-bar {
+    width: 500px;
+}
+
+.room-main__header__search-bar .ant-input-affix-wrapper {
+    width: 400px !important;
+    margin-left: 6px !important;
+    margin-top: 5px !important;
+    height: 40px;
+
+}
+
+.room-main__header__search-bar .ant-btn {
+    margin-left: 6px !important;
+    height: 40px;
+    line-height: 38px;
+}
+
+.btn-create {
+    position: absolute !important;
+    height: 38px !important;
+    top: 6px;
+    right: 6px;
+}
+
+.music-page__edit-fields .ant-select {
+    width: 100% !important;
+}
+
+.music-page__edit-fields .ant-select-selection,
+.music-page__edit-fields .ant-select-selection__rendered {
+    height: 40px;
+}
+
+.music-page__edit-fields .ant-select-selection__rendered {
+    padding-top: 6px;
+}
+
+.ant-select-dropdown {
+    z-index: 9999 !important;
+}
+
+.create-playlist-select-option img,
+.create-playlist-select-option .default-playlist-icon {
+    width: 25px;
+    height: 25px;
+    float: left;
+    margin-right: 5px;
+    font-size: 20px;
+}
+
+.create-playlist-select-option > span {
     float: left;
 }
 
-.now-playing span {
-    font-weight: bold;
+.search-cross {
+    font-size: 16px;
+    cursor: pointer;
 }
 
-.search-bar {
-    width: 400px !important;
-    margin-top: 5px !important;
-    margin-left: 50% !important;
-    transform: translateX(-50%);
+.rooms-list__reload {
+    margin-right: 10px;
+    border: none;
 
+}
+
+.rooms-list__reload > span {
+    border-radius: 5px;
+    background-color: rgba(25, 118, 210, 0.6);
+    padding: 5px;
+    color: white;
+    cursor: pointer;
+}
+
+.rooms-list__reload > span:hover {
+    background-color: rgba(25, 118, 210, 0.7);
+    transition: 0.2s ease;
+}
+
+.rooms-list__reload > span:active {
+    background-color: rgba(25, 118, 210, 0.8);
+    transition: 0.2s ease;
+}
+
+@keyframes rotation {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.rotate-animation {
+    animation: rotation 0.5s ease-out;
 }

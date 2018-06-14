@@ -6,6 +6,9 @@ import {
 import {
     CREATE_PLAYLIST_SUCCESS, DELETE_PLAYLIST_SUCCESS
 } from '../constants/playlist';
+import {
+    CREATE_ROOM_SUCCESS
+} from '../constants/room';
 
 const initialState = {
     isFetching: false,
@@ -36,6 +39,10 @@ const user = (state=initialState, action) => {
             const deletedPlaylistIndex = currUser.playlists.indexOf(action.payload);
             currUser.playlists.splice(deletedPlaylistIndex, 1);
             return { ...state, currentUser };
+        case CREATE_ROOM_SUCCESS:
+            const cUser = state.currentUser;
+            cUser.rooms.push(action.payload);
+            return { ...state, currentUser: cUser };
         default:
             return state;
     }

@@ -24,11 +24,17 @@ mongoose.connect('mongodb://admin:Topaz123_@ds131989.mlab.com:31989/sound-around
 
 const { signup, login, verifyAuth, verifyUser, decodeToken } = require('./src/app/routes/auth');
 const { getUser, updateUser, deleteUser } = require('./src/app/routes/user');
-const { getUserMusic, uploadUserMusic, addTrack, updateTrack, deleteTrack } = require('./src/app/routes/music');
+const {
+    getUserMusic, uploadUserMusic, addTrack, updateTrack, deleteTrack,
+    getTrack
+} = require('./src/app/routes/music');
 const {
     getUserPlaylist, createPlaylist, getPlaylistTracks,
     updatePlaylist, getPlaylists, deletePlaylist
 } = require('./src/app/routes/playlist');
+const {
+    getRoomsPage, createRoom 
+} = require('./src/app/routes/room');
 
 const app = new Express();
 const port = process.env.PORT || 8000;
@@ -49,6 +55,9 @@ app.route('/api/music/list/:username')
     .get(verifyAuth, verifyUser, getUserMusic)
     .post(verifyAuth, verifyUser, upload.single('audio'), uploadUserMusic);
 
+app.route('/api/music/track/:trackId')
+    .get(verifyAuth, getTrack);
+
 app.route('/api/music/:username/:trackId')
     .get(verifyAuth, verifyUser, addTrack)
     .put(verifyAuth, verifyUser, updateTrack)
@@ -65,6 +74,12 @@ app.route('/api/playlists/music/:username/:playlistId')
 app.route('/api/playlists/:username')
     .get(verifyAuth, verifyUser, getPlaylists)
     .post(verifyAuth, verifyUser, createPlaylist);
+
+app.route('/api/rooms/list')
+    .get(verifyAuth, getRoomsPage);
+
+app.route('/api/rooms/:username')
+    .post(verifyAuth, verifyUser, createRoom);
 
 app.get('/*', (req, res) => {
     res.sendFile(path.join(__dirname, '/build/index.html'));

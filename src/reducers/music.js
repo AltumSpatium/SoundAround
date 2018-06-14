@@ -1,5 +1,6 @@
 import {
     GET_MUSIC_PAGE_REQUEST, GET_MUSIC_PAGE_SUCCESS, GET_MUSIC_PAGE_FAIL,
+    GET_TRACK_REQUEST, GET_TRACK_SUCCESS, GET_TRACK_FAIL,
     UPLOAD_TRACK_REQUEST, UPLOAD_TRACK_SUCCESS, UPLOAD_TRACK_FAIL,
     UPDATE_TRACK_REQUEST, UPDATE_TRACK_SUCCESS, UPDATE_TRACK_FAIL,
     DELETE_TRACK_REQUEST, DELETE_TRACK_SUCCESS, DELETE_TRACK_FAIL,
@@ -10,7 +11,10 @@ const initialState = {
     tracks: [],
     isFetching: false,
     hasMore: true,
-    isUploadingAudio: false
+    isUploadingAudio: false,
+
+    track: null,
+    loadingTrack: false
 };
 
 const music = (state=initialState, action) => {
@@ -23,6 +27,12 @@ const music = (state=initialState, action) => {
             return { ...state, tracks, isFetching: false, hasMore: !!tracksPage.length };
         case GET_MUSIC_PAGE_FAIL:
             return { ...state, isFetching: false };
+        case GET_TRACK_REQUEST:
+            return { ...state, loadingTrack: true };
+        case GET_TRACK_SUCCESS:
+            return { ...state, loadingTrack: false, track: action.payload };
+        case GET_TRACK_FAIL:
+            return { ...state, loadingTrack: false };
         case CLEAR_MUSIC_LIST:
             return { ...initialState };
         case UPLOAD_TRACK_REQUEST:
