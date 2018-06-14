@@ -4,7 +4,8 @@ import InfiniteList from '../shared/InifiniteList';
 import Room from './Room';
 import RoomInfo from './RoomInfo';
 import CreateRoomModal from './CreateRoomModal';
-import { Button, Input, Tabs } from 'antd';
+import DeleteRoomModal from './DeleteRoomModal';
+import { Button, Input, Tabs, Icon } from 'antd';
 import { getRooms, clearRooms } from '../../actions/room';
 
 import '../../styles/RoomsPage.css';
@@ -38,6 +39,8 @@ class RoomsPage extends Component {
         this.onChange = this.onChange.bind(this);
         this.clearSearch = this.clearSearch.bind(this);
         this.loadRoomsPage = this.loadRoomsPage.bind(this);
+        this.reloadRooms = this.reloadRooms.bind(this);
+        this.enterRoom = this.enterRoom.bind(this);
     }
 
     onChange(e) {
@@ -90,7 +93,12 @@ class RoomsPage extends Component {
         return (
             <Room
                 key={room._id} room={room} isRoomAuthor={this.isRoomAuthor(room)}
-                onRoomClick={() => this.showInfo(room)} isActive={room._id == chosenRoom._id} />
+                onRoomClick={() => this.showInfo(room)} isActive={room._id == chosenRoom._id}
+                onDeleteClick={e => {
+                    e.stopPropagation();
+                    this.setState({ roomToDelete: room });
+                    this.showModal('deleteModal');
+                }} />
         );
     }
 
@@ -107,24 +115,36 @@ class RoomsPage extends Component {
     createRoom() {
         this.hideModal('createModal');
         this.clearRooms().then(this.loadMore);
-        // this.setState({ page: 1 }, () => {
-        //     this.props.clearRooms().then(this.loadMore);
-        // });
     }
 
     deleteRoom(roomId) {
-
+        alert(roomId);
+        this.hideModal('deleteModal');
     }
 
-    clearRooms = async () => this.setState({ page: 1 }, this.props.clearRooms)
+    clearRooms = async () => this.setState({ page: 1, chosenRoom: null }, this.props.clearRooms)
 
     clearSearch() {
         this.setState({ search: '' });
         this.clearRooms();
     }
 
+    reloadRooms() {
+        this.clearRooms();
+        const reloadIcon = document.querySelector('.rooms-list__reload i');
+        reloadIcon.classList.add('rotate-animation');
+        setTimeout(() => { reloadIcon.classList.remove('rotate-animation') }, 500);
+    }
+
+    enterRoom(room) {
+        
+    }
+
     render() {
-        const { chosenRoom, createModal, search, activeTab } = this.state;
+        const {
+            chosenRoom, createModal, deleteModal, search,
+            activeTab, roomToDelete
+        } = this.state;
         const { rooms, loading, hasMore, currentUser } = this.props;
         const userRooms = rooms.filter(this.isRoomAuthor);
 
@@ -155,7 +175,13 @@ class RoomsPage extends Component {
                                 </Button>
                             </div>                            
                             <div className="rooms-list">
-                                <Tabs activeKey={activeTab} onChange={activeTab => this.setState({ activeTab })}>
+                                <Tabs
+                                    activeKey={activeTab} onChange={activeTab => this.setState({ activeTab })}
+                                    tabBarExtraContent={
+                                        <div className='rooms-list__reload'>
+                                            <span onClick={this.reloadRooms}><Icon type='reload' /></span>
+                                        </div>
+                                    }>
                                     <Tabs.TabPane tab='All rooms' key='1'>
                                         <InfiniteList
                                             hasMore={hasMore} loading={loading} loadMore={this.loadMore}
@@ -173,7 +199,7 @@ class RoomsPage extends Component {
                         </div>
                     </div>
                     <div className="col-md-4">
-                        <RoomInfo room={chosenRoom} />
+                        <RoomInfo room={chosenRoom} onEnterRoom={this.enterRoom} />
                     </div>
                     <div className="col-md-1"></div>
                 </div>
@@ -181,7 +207,12 @@ class RoomsPage extends Component {
                 <CreateRoomModal
                     isVisible={createModal}
                     onCancelCreate={() => this.hideModal('createModal')}
-                    onClickCreate={this.createRoom}/>
+                    onClickCreate={this.createRoom} />
+                
+                <DeleteRoomModal
+                    isVisible={deleteModal} room={roomToDelete}
+                    onCancelDelete={() => this.hideModal('deleteModal')}
+                    onConfirmDelete={this.deleteRoom} />
             </div>
         );
     }

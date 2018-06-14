@@ -126,11 +126,14 @@
     margin-top: 15px;
     padding: 5px;
     font-size: 18px;
-    float: left;
 }
 
-.now-playing span {
-    font-weight: bold;
+.now-playing-loading {
+    text-align: center;
+}
+
+.now-playing .track-piece-wrapper {
+    cursor: pointer;
 }
 
 .room-main__header {
@@ -197,4 +200,37 @@
 .search-cross {
     font-size: 16px;
     cursor: pointer;
+}
+
+.rooms-list__reload {
+    margin-right: 10px;
+    border: none;
+
+}
+
+.rooms-list__reload > span {
+    border-radius: 5px;
+    background-color: rgba(25, 118, 210, 0.6);
+    padding: 5px;
+    color: white;
+    cursor: pointer;
+}
+
+.rooms-list__reload > span:hover {
+    background-color: rgba(25, 118, 210, 0.7);
+    transition: 0.2s ease;
+}
+
+.rooms-list__reload > span:active {
+    background-color: rgba(25, 118, 210, 0.8);
+    transition: 0.2s ease;
+}
+
+@keyframes rotation {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.rotate-animation {
+    animation: rotation 0.5s ease-out;
 }

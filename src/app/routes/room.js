@@ -15,8 +15,6 @@ const getRoomsPage = async (req, res) => {
     const search = req.query.search;
     let rooms;
 
-    console.log(search);
-
     if (search) {
         rooms = Room.find({ name: { $regex: search, $options: 'i' } }).select('-messages');
     } else {
