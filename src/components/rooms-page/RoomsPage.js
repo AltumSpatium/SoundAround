@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import openSocket from 'socket.io-client';
 import InfiniteList from '../shared/InifiniteList';
 import Room from './Room';
 import RoomInfo from './RoomInfo';
 import CreateRoomModal from './CreateRoomModal';
 import DeleteRoomModal from './DeleteRoomModal';
 import { Button, Input, Tabs, Icon } from 'antd';
-import { getRooms, clearRooms } from '../../actions/room';
+import { getRooms, clearRooms, deleteRoom, exitRoom } from '../../actions/room';
 
 import '../../styles/RoomsPage.css';
 
@@ -27,6 +28,8 @@ class RoomsPage extends Component {
             chosenRoom: null,
             roomToDelete: null
         };
+
+        this.io = openSocket();
 
         this.loadMore = this.loadMore.bind(this);
         this.renderListItem = this.renderListItem.bind(this);
@@ -118,7 +121,11 @@ class RoomsPage extends Component {
     }
 
     deleteRoom(roomId) {
-        alert(roomId);
+        this.props.deleteRoom(roomId).then(err => {
+            if (!err) this.io.emit('deleteRoom', { roomId });
+            const { chosenRoom } = this.state;
+            if (chosenRoom && chosenRoom._id === roomId) this.setState({ chosenRoom: null });
+        });
         this.hideModal('deleteModal');
     }
 
@@ -137,7 +144,17 @@ class RoomsPage extends Component {
     }
 
     enterRoom(room) {
-        
+        const { currentUser } = this.props;
+        const currentRoom = currentUser.currentRoom;
+
+        if (!currentRoom || currentRoom && currentRoom === room._id) {
+            this.props.history.push(`/rooms/${room._id}`);
+        } else {
+            this.io.emit('exitRoom', { roomId: currentRoom, username: currentUser.username });
+            this.props.exitRoom(currentUser.username, currentRoom).then(() => {
+                this.props.history.push(`/rooms/${room._id}`);
+            });
+        }
     }
 
     render() {
@@ -145,7 +162,7 @@ class RoomsPage extends Component {
             chosenRoom, createModal, deleteModal, search,
             activeTab, roomToDelete
         } = this.state;
-        const { rooms, loading, hasMore, currentUser } = this.props;
+        const { rooms, loading, hasMore } = this.props;
         const userRooms = rooms.filter(this.isRoomAuthor);
 
         return (
@@ -227,7 +244,9 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     getRooms: (page, pageSize, search) => dispatch(getRooms(page, pageSize, search)),
-    clearRooms: () => dispatch(clearRooms())
+    deleteRoom: roomId => dispatch(deleteRoom(roomId)),
+    clearRooms: () => dispatch(clearRooms()),
+    exitRoom: (username, roomId) => dispatch(exitRoom(username, roomId))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(RoomsPage);

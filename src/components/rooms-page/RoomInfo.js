@@ -43,7 +43,7 @@ class RoomInfo extends Component {
         if (!this.props.room && nextProps.room) {
             load();
         } else if (this.props.room && nextProps.room &&
-            this.props.room._id != nextProps.room._id) {
+            this.props.room._id !== nextProps.room._id) {
             load();
         }
     }

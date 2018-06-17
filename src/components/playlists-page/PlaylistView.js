@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import moment from 'moment';
-import { Button, Icon, List, Spin, Modal } from 'antd';
+import { Button, List, Spin, Modal } from 'antd';
 import InfiniteScroll from 'react-infinite-scroller';
 import { createPicture, beautifyDuration } from '../../util/trackUtil';
 import { defaultPlaylistPicture } from '../../constants/playlist';

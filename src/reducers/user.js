@@ -7,7 +7,7 @@ import {
     CREATE_PLAYLIST_SUCCESS, DELETE_PLAYLIST_SUCCESS
 } from '../constants/playlist';
 import {
-    CREATE_ROOM_SUCCESS
+    CREATE_ROOM_SUCCESS, USER_ENTERED_ROOM, USER_EXITED_ROOM
 } from '../constants/room';
 
 const initialState = {
@@ -31,18 +31,26 @@ const user = (state=initialState, action) => {
         case DELETE_USER_FAIL:
             return { ...state, isFetching: false };
         case CREATE_PLAYLIST_SUCCESS:
-            const currentUser = state.currentUser;
-            currentUser.playlists.push(action.payload);
-            return { ...state, currentUser };
+            const userCreatedPlaylist = { ...state.currentUser };
+            userCreatedPlaylist.playlists.push(action.payload);
+            return { ...state, currentUser: userCreatedPlaylist };
         case DELETE_PLAYLIST_SUCCESS:
-            const currUser = state.currentUser;
-            const deletedPlaylistIndex = currUser.playlists.indexOf(action.payload);
-            currUser.playlists.splice(deletedPlaylistIndex, 1);
-            return { ...state, currentUser };
+            const userDeletedPlaylist = { ...state.currentUser };
+            const deletedPlaylistIndex = userDeletedPlaylist.playlists.indexOf(action.payload);
+            userDeletedPlaylist.playlists.splice(deletedPlaylistIndex, 1);
+            return { ...state, currentUser: userDeletedPlaylist };
         case CREATE_ROOM_SUCCESS:
-            const cUser = state.currentUser;
-            cUser.rooms.push(action.payload);
-            return { ...state, currentUser: cUser };
+            const userCreatedRoom = { ...state.currentUser };
+            userCreatedRoom.rooms.push(action.payload);
+            return { ...state, currentUser: userCreatedRoom };
+        case USER_ENTERED_ROOM:
+            const userEnteredRoom = { ...state.currentUser };
+            userEnteredRoom.currentRoom = action.payload.roomId;
+            return { ...state, currentUser: userEnteredRoom };
+        case USER_EXITED_ROOM:
+            const userExitedRoom = { ...state.currentUser };
+            userExitedRoom.currentRoom = null;
+            return { ...state, currentUser: userExitedRoom };
         default:
             return state;
     }
