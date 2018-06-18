@@ -109,22 +109,11 @@ const getPlaylists = async (req, res) => {
     }
 };
 
-const addPlaylist = async (req, res) => {
-    const { username, trackId } = req.params;
+const addPlaylist = async (username, playlistId) => {
     const user = await User.findOne({ username });
-    if (!user) {
-        return res.status(404).json({ message: `No user registered with username ${username}` }); 
-    }
-
-    user.tracks.push(trackId);
-    User.findOneAndUpdate({ username }, { tracks: user.tracks }, {}).exec();
-    Track.findByIdAndUpdate(trackId, { $inc: { usersLinks: 1 } }, {}, err => {
-        if (err) {
-            res.status(500).json({ message: `Error while adding track` });
-        } else {
-            res.json({ message: 'Successfully added' });
-        }
-    });
+    user.playlists.push(playlistId);
+    User.findOneAndUpdate({ username }, { playlists: user.playlists }, {}).exec();
+    Playlist.findByIdAndUpdate(playlistId, { $inc: { usersLinks: 1 } }, {}).exec();
 };
 
 const updatePlaylist = async (req, res) => {

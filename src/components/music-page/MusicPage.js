@@ -211,8 +211,10 @@ class MusicPage extends Component {
         uploadTrack(currentUser.username, fileList[0])
             .then(() => {
                 this.hideModal('uploadModal', this.clearUploadFileList, 500);
-                this.setState({ page: 1, uploadingPercent: 100 },
-                    () => clearMusicList().then(() => this.loadMore()));
+                this.setState({ page: 1, uploadingPercent: 100 }, () => {
+                    clearMusicList();
+                    this.loadMore();
+                });
             }).then(() => setTimeout(() => this.setState({ uploadingPercent: 0 }), 550));
     }
 

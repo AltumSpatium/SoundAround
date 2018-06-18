@@ -4,7 +4,7 @@ import {
     UPLOAD_TRACK_REQUEST, UPLOAD_TRACK_SUCCESS, UPLOAD_TRACK_FAIL,
     UPDATE_TRACK_REQUEST, UPDATE_TRACK_SUCCESS, UPDATE_TRACK_FAIL,
     DELETE_TRACK_REQUEST, DELETE_TRACK_SUCCESS, DELETE_TRACK_FAIL,
-    CLEAR_MUSIC_LIST, SET_MUSIC_TRACKLIST
+    CLEAR_MUSIC_LIST, SET_MUSIC_TRACKLIST, ADD_TRACK
 } from '../constants/music';
 import {
     request, success, fail, callAPI
@@ -71,7 +71,7 @@ export const uploadTrack = (username, track) => {
             body: formData
         },
         requestAction: uploadTrackRequest,
-        successAction: uploadTrackSuccess,
+        successAction: successObj => uploadTrackSuccess(successObj.trackId),
         failAction: uploadTrackFail,
         onSuccess: json => toastr.success('Success', json.message),
         onFail: error => toastr.error('Error', error.message)
@@ -127,3 +127,7 @@ const setMusicTracklistSuccess = success(SET_MUSIC_TRACKLIST);
 export const setMusicTracklist = tracklist => dispatch => {
     return dispatch(setMusicTracklistSuccess(tracklist));
 };
+
+const addTrackSuccess = success(ADD_TRACK);
+
+export const addTrack = trackId => async dispatch => dispatch(addTrackSuccess(trackId));

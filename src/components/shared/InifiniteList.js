@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import InfiniteScroller from 'react-infinite-scroller';
 import { List, Spin } from 'antd';
 import PropTypes from 'prop-types';

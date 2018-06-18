@@ -48,12 +48,38 @@
     background-color: white;
     border-bottom: none;
     position: relative;
+    display: flex;
+    flex-direction: column-reverse;
+    overflow: auto;
+}
+
+div.chat-window::-webkit-scrollbar {
+    width: 8px;
+}
+
+div.chat-window::-webkit-scrollbar-track {
+    background-color: rgba(0, 0, 0, 0.01);
+}
+
+div.chat-window::-webkit-scrollbar-thumb {
+    background-color: #CFD8DC;
+    border-radius: 4px;
+}
+
+div.chat-window::-webkit-scrollbar-thumb:hover {
+    background-color: #c5d0d6;
+    transition: 0.1s ease;
+}
+
+div.chat-window::-webkit-scrollbar-thumb:active {
+    background-color: #B0BEC5;
 }
 
 .chat-input {
     width: 95%;
     height: 35px;
     background-color: rgb(25, 118, 210, 0.4);
+    position: relative;
     margin: auto;
     border-bottom-right-radius: 5px;
     border-bottom-left-radius: 5px;
@@ -64,6 +90,14 @@
     width: 460px;
     height: 35px;
     margin: 0 !important;
+    position: absolute;
+    top: 0;
+    right: 70px;
+}
+
+.chat-input .ant-input:focus,
+.chat-input input:focus {
+    box-shadow: none !important;
 }
 
 .chat-input button {
@@ -72,71 +106,202 @@
     height: 35px;
     margin: 0;
     border-bottom-right-radius: 5px;
-    background-color: rgb(25, 118, 210, 0.9);
+    background-color: rgba(25, 118, 210, 0.5);
     color: white;
+    position: absolute;
+    top: 0;
+    right: 0;
 }
 
-.chat-input > div {
+.chat-input button:hover {
+    background-color: rgba(25, 118, 210, 0.7);
+    transition: 0.2s ease;
+}
+
+.chat-input button:active {
+    background-color: #1565C0 !important;
+}
+
+.chat-input button:focus {
+    background-color: rgba(25, 118, 210, 0.7);
+    outline: none;
+    transition: 0.2s ease;
+}
+
+.chat-input .chat__attach-btn {
     text-align: center;
-    display: inline-block;
     width: 40px;
     color: white;
     border-bottom-left-radius: 5px;
     height: 35px;
+    background-color: rgba(25, 118, 210, 0.5);
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.chat-input .chat__attach-btn:hover,
+.chat-input .chat__attach-btn:focus {
+    transition: 0.2s ease;
+    background-color: rgba(25, 118, 210, 0.7);
+}
+
+.chat-input .chat__attach-btn:active {
+    background-color: #1565C0;
+}
+
+.chat-input .chat__attach-btn > i {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .msg {
     width: 97%;
-    margin: 5px auto;
+    margin: 8px auto;
     background-color: rgb(25, 118, 210, 0.05);
     padding: 5px;
-    position: absolute;
-    bottom: 0;
-    right: 9px;
+    
+}
+
+.msg-active {
+    background-color: rgb(25, 118, 210, 0.2);
 }
 
 .msg-text {
 
 }
 
-.msg-author {
+.msg-info > span:first-child {
     font-size: 15px;
     font-weight: bold;
+}
+
+.msg-info > span:last-child {
+    font-size: 13px;
+    margin-left: 10px;
+}
+
+.msg-tp-wrapper {
+    border: 1px solid #64B5F6;
+    border-radius: 6px;
+    background-color: rgba(100, 181, 246, 0.5);
+    position: relative;
+}
+
+.msg-add-attachment-tp {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    font-size: 17px;
+    color: white;
+    cursor: pointer;
+    opacity: 0;
+}
+
+.msg-add-attachment-pl {
+    font-size: 17px;
+    color: white;
+    cursor: pointer;
+    right: 20px;
+    position: absolute;
+    opacity: 0;
+}
+
+.msg-tp-wrapper:hover .msg-add-attachment-tp,
+.msg-pl-wrapper:hover .msg-add-attachment-pl {
+    opacity: 1;
+    transition: 0.2s ease;
+}
+
+.msg-pl-wrapper {
+    height: 30px;
+    width: 100%;
+    border: 1px solid #64B5F6;
+    border-radius: 6px;
+    background-color: rgba(100, 181, 246, 0.5);
+    padding-top: 3px;
+}
+
+.msg-pl-wrapper .default-playlist-icon svg {
+    margin-bottom: 10px;
 }
 
 .room-aside {
     padding: 3px;
 }
 
-.np > span, .tracklist > span {
+.croom__now-playing > span,
+.tracklist > span {
     font-size: 15px;
     font-weight: bold;
     color: black;
 }
 
-.tp-wrap {
+.croom__now-playing-wrap {
     background-color: rgb(25, 118, 210, 0.3);
     padding: 2px;
     margin-top: 2px;
-    margin-bottom: 2px;
+    margin-bottom: 10px;
+    margin-right: 2px;
     border-radius: 5px;
+    cursor: pointer;
 }
 
-.tracklist {
-    margin-top: 10px;
+.croom__now-playing-wrap:last-child {
+    margin-bottom: 0;
+}
+
+.croom__now-playing-wrap:hover {
+    transition: 0.2s ease;
+    background-color: rgb(25, 118, 210, 0.5);
 }
 
 .tracklist > div {
-    height: 300px;
     overflow: auto;
+    max-height: 300px;
+    margin-top: 3px;
+}
+
+div.tracklist > div::-webkit-scrollbar {
+    width: 10px;
+}
+
+div.tracklist > div::-webkit-scrollbar-track {
+    background-color: rgba(0, 0, 0, 0.01);
+}
+
+div.tracklist > div::-webkit-scrollbar-thumb {
+    background-color: #64B5F6;
+    border-radius: 4px;
+}
+
+div.tracklist > div::-webkit-scrollbar-thumb:hover {
+    background-color: #42A5F5;
+    transition: 0.1s ease;
+}
+
+div.tracklist > div::-webkit-scrollbar-thumb:active {
+    background-color: #2196F3;
+}
+
+.tracklist__loading-tracks {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.tracklist-np {
+    background-color: rgb(25, 118, 210, 0.8) !important;
 }
 
 .users-online {
-    margin-top: 10px;
     padding: 3px;
 }
 
-.users-online > span {
+.users-online > div {
     font-size: 13px;
     font-weight: 100;
     margin-left: 10px;
@@ -144,9 +309,72 @@
     text-decoration: underline;
 }
 
-.users-online > span:first-child {
+.users-online__btn-ban {
+    margin-left: 3px;
+    color: red;
+    cursor: pointer;
+    opacity: 0;
+}
+
+.users-online > div:not(:first-child):hover .users-online__btn-ban {
+    transition: 0.2s ease;
+    opacity: 1;   
+}
+
+.users-online > div:first-child {
     font-size: 15px;
     font-weight: bold;
     margin-left: 0;
     text-decoration: none;
+}
+
+.croom-page__entering-room {
+    position: absolute;
+    text-align: center;
+    font-size: 30px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.croom-header__settings {
+    margin-left: 5px;
+    cursor: pointer;
+    transition: 0.2s ease-in-out;
+}
+
+.croom-header__settings:hover {
+    color: #EEEEEE;
+    transition: 0.2s ease-in-out;
+}
+
+.manage-room-modal__main > button {
+    margin-bottom: 5px;
+    width: 100%;
+}
+
+.manage-room__playlist .ant-select {
+    width: 100%;
+}
+
+.chat-input__attachment {
+    font-size: 18px;
+}
+
+.chat-input__attachment > div {
+    padding: 8px;
+    cursor: pointer;
+}
+
+.chat-input__attachment > div:hover {
+    background-color: #F5F5F5;
+    transition: 0.2s ease;
+}
+
+.chat-input__attachment > div:active {
+    background-color: #EEEEEE;
+}
+
+.chat-input__attachment-overlay .ant-popover-inner-content {
+    padding: 5px 5px; 
 }

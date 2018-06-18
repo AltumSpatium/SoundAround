@@ -1,77 +1,240 @@
 import React, { Component } from 'react';
-import TrackPiece from '../shared/TrackPiece';
 import { connect } from 'react-redux';
-import { getMusicPage } from '../../actions/music';
-import { Button, Input, Icon } from 'antd';
+import openSocket from 'socket.io-client';
+import { Spin } from 'antd';
+import { Link } from 'react-router-dom';
+import RoomAside from './RoomAside';
+import RoomMain from './RoomMain';
+import ManageRoomModal from './ManageRoomModal';
+import {
+    getRoom, clearRooms, getRoomPlaylist, enterRoom,
+    exitRoom, receiveMessage, kickUser, updateRoom
+} from '../../actions/room';
+import {
+    getPlaylist, clearPlaylist, getPlaylists, addPlaylist
+} from '../../actions/playlist';
+import { clearMusicList, getMusicPage, addTrack } from '../../actions/music';
+import { showMessage } from '../../util/toastrUtil';
 
 import '../../styles/CurrentRoomPage.css';
 
 class CurrentRoomPage extends Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            userEntered: false,
+            messages: [],
+
+            manageModal: false
+        };
+
+        this.roomId = props.location.pathname.split('/')[2];
+
+        this.enterRoom = this.enterRoom.bind(this);
+        this.exitRoom = this.exitRoom.bind(this);
+        this.sendMessage = this.sendMessage.bind(this);
+        this.kickUser = this.kickUser.bind(this);
+        this.updateRoom = this.updateRoom.bind(this);
+        this.addPlaylist = this.addPlaylist.bind(this);
+        this.addTrack = this.addTrack.bind(this);
+    }
+
+    hideModal = (modalName, cb, timeout=0) => {
+        const hide = () => this.setState({ [modalName]: false }, cb ? cb : () => {});
+        if (timeout > 0) {
+            setTimeout(() => {
+                hide();
+            }, timeout);
+        } else hide();
+    }
+    showModal = (modalName, cb) => this.setState({ [modalName]: true }, cb ? cb : () => {})
+
+    isAdmin = () => {
+        const { currentUser, room } = this.props;
+        if (!currentUser || !room) return false;
+        return currentUser._id === room.authorId;
+    }
+
+    componentWillUnmount() {
+        this.props.clearPlaylist();
+        this.props.clearMusicList();
+        this.props.clearRooms();
+        this.io.disconnect();
+    }
+
+    addTrack(track) {
+        const { currentUser } = this.props;
+        this.io.emit('addTrack', { username: currentUser.username, trackId: track._id });
+    }
+
+    addPlaylist(playlist) {
+        const { currentUser } = this.props;
+        this.io.emit('addPlaylist', { username: currentUser.username, playlistId: playlist._id });
+    }
+
     componentDidMount() {
-        this.props.getMusicPage();
+        if (!this.props.location.state || this.props.location.state && !this.props.location.state.allowed) return;
+        const { getRoom } = this.props;
+        getRoom(this.roomId);
+
+        this.io = openSocket();
+        this.io.on('enterRoom', ({ username, roomId }) => this.props.enterRoom(username, roomId));
+        this.io.on('exitRoom', ({ username, roomId }) => {
+            const { currentUser } = this.props;
+            if (username !== currentUser.username) this.props.exitRoom(username, roomId);
+        });
+        this.io.on('message', message => this.props.receiveMessage(message));
+        this.io.on('deleteRoom', () => {
+            showMessage('The room was deleted!', null, 'warning');
+            this.props.history.push('/rooms');
+        });
+        this.io.on('kickUser', username => {
+            this.props.kickUser(username);
+            if (this.props.currentUser.username === username) {
+                showMessage('You have been kicked from the room!', null, 'warning');
+                this.props.history.push('/rooms');
+            }
+        });
+        this.io.on('updateRoom', updatedRoom => this.props.updateRoom(updatedRoom));
+        this.io.on('addTrack', trackId => this.props.addTrack(trackId));
+        this.io.on('addPlaylist', playlistId => this.props.addPlaylist(playlistId));
+    }
+
+    exitRoom() {
+        const { room, currentUser } = this.props;
+        this.io.emit('exitRoom', { roomId: room._id, username: currentUser.username });
+        this.props.history.push('/rooms');
+    }
+
+    enterRoom() {
+        const { currentUser } = this.props;
+        if (currentUser) {
+            this.io.emit('enterRoom', { roomId: this.roomId, username: currentUser.username });
+            this.setState({ userEntered: true });
+        }
+    }
+
+    sendMessage(message) {
+        const { currentUser } = this.props;
+        this.io.emit('message', { roomId: this.roomId, username: currentUser.username, message });
+        this.props.receiveMessage({ user: currentUser.username, ...message });
+    }
+
+    kickUser(username) {
+        this.io.emit('kickUser', { roomId: this.roomId, username });
+    }
+
+    updateRoom(changedField, changedValue) {
+        if (!changedField) return;
+
+        this.io.emit('updateRoom', { roomId: this.roomId, field: changedField, value: changedValue });
+    }
+
+    componentWillReceiveProps(nextProps) {
+        const { userEntered } = this.state;
+
+        if (!this.props.room && nextProps.room) {
+            const { room, currentUser } = nextProps;
+            this.props.getPlaylist(room.currentPlaylist);
+            this.props.getPlaylists(currentUser.username);
+            this.props.getTracks(currentUser.username);
+        }
+
+        if (this.props.room && nextProps.room && this.props.room.currentPlaylist !== nextProps.room.currentPlaylist) {
+            this.props.clearPlaylist();
+            this.props.clearMusicList();
+            const { room, currentUser } = nextProps;
+            this.props.getPlaylist(room.currentPlaylist);
+            this.props.getPlaylists(currentUser.username);
+            this.props.getTracks(currentUser.username);
+        }
+
+        if (!this.props.roomPlaylist && nextProps.roomPlaylist) {
+            const playlist = nextProps.roomPlaylist;
+            const { room, currentUser } = this.props;
+            this.props.getRoomPlaylist(room._id, playlist._id, currentUser._id);
+        }
+
+        if (!userEntered) this.enterRoom();
     }
 
     render() {
-        const tracks = this.props.tracks;
-        if (!tracks || !tracks.length) return null;
+        if (!this.props.location.state || this.props.location.state && !this.props.location.state.allowed) {
+            return (
+                <div>Access denied</div>
+            );
+        }
 
-        const messages = [
-            { author: 'alex', text: 'Hello guys!' }
-        ];
+        const { manageModal } = this.state;
+        const {
+            room, enteringRoom, roomPlaylist, loadingPlaylist,
+            playlistTracks, currentUser, playlists
+        } = this.props;
+        if (!room) {
+            if (enteringRoom) {
+                return (
+                    <div className='croom-page__entering-room'>
+                        <span>Entering room...</span><br />
+                        <Spin size='default' />
+                    </div>
+                );
+            } else {
+                return (
+                    <div className='playlist-page__not-found'>
+                        <span>Room not found</span><br/>
+                        <Link to='/rooms'>To rooms page</Link>
+                    </div>
+                );
+            }
+        }
 
         return (
             <div className="current-room-page">
-                <div className="room-main">
-                    <div className="croom-header">
-                        <span>enjoy our music</span><Button>Exit</Button>
-                        <div style={{clear: 'both'}}></div>
-                    </div>
-                    <div className="chat-window">
-                        {messages.map(msg => (
-                            <div className="msg">
-                                <div className="msg-author">{msg.author}</div>
-                                <div className="msg-text">{msg.text}</div>
-                            </div>
-                        ))}
-                    </div>
-                    <div className="chat-input">
-                        <div><Icon type='plus' /></div><Input /><button>Send</button>
-                    </div>
-                </div>
-                <div className="room-aside">
-                    <div className="np">
-                        <span>Now playing:</span>
-                        <div className='tp-wrap'>
-                            <TrackPiece track={tracks[1]} />
-                        </div>
-                    </div>
-                    <div className="tracklist">
-                        <span>My first playlist</span>
-                        <div>
-                            {tracks.slice(0, 5).map((item, index) => (
-                                <div className={`tp-wrap ${index === 1 ? 'active' : ''}`} key={index}>
-                                    <TrackPiece track={item} />
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                    <div className="users-online">
-                        <span>Users online:</span><br/>
-                        <span>sample user</span><br/>
-                        <span>alex</span>
-                    </div>
-                </div>
+                <RoomMain
+                    room={room} onExitClick={this.exitRoom} sendMessage={this.sendMessage}
+                    isAdmin={this.isAdmin} onSettingClick={() => this.showModal('manageModal')}
+                    addTrack={this.addTrack} addPlaylist={this.addPlaylist} />
+                <RoomAside
+                    playlist={roomPlaylist} loading={loadingPlaylist} room={room}
+                    playlistTracks={playlistTracks} isAdmin={this.isAdmin}
+                    kickUser={this.kickUser} currentUser={currentUser} />
+
+                <ManageRoomModal
+                    isVisible={manageModal} onCloseClick={() => this.hideModal('manageModal')}
+                    room={room} playlists={playlists} updateRoom={this.updateRoom} />
             </div>
         );
     }
 }
 
 const mapStateToProps = state => ({
-    tracks: state.music.tracks
+    currentUser: state.user.currentUser,
+    room: state.room.room,
+    enteringRoom: state.room.enteringRoom,
+    roomPlaylist: state.playlist.playlist,
+    loadingPlaylist: state.playlist.loadingPlaylist,
+    playlists: state.playlist.playlists,
+    playlistTracks: state.room.roomPlaylistTracks,
+    playlistTracksLoading: state.room.loadingRoomPlaylistTracks
 });
 
 const mapDispatchToProps = dispatch => ({
-    getMusicPage: () => dispatch(getMusicPage('alex', 1, 20, 'uploadDate', 'desc'))
+    getRoom: roomId => dispatch(getRoom(roomId)),
+    clearRooms: () => dispatch(clearRooms()),
+    getPlaylist: playlistId => dispatch(getPlaylist(playlistId)),
+    getPlaylists: username => dispatch(getPlaylists(username)),
+    clearPlaylist: () => dispatch(clearPlaylist()),
+    getRoomPlaylist: (roomId, playlistId, userId) => dispatch(getRoomPlaylist(roomId, playlistId, userId)),
+    enterRoom: (username, roomId) => dispatch(enterRoom(username, roomId)),
+    exitRoom: (username, roomId) => dispatch(exitRoom(username, roomId)),
+    receiveMessage: message => dispatch(receiveMessage(message)),
+    kickUser: username => dispatch(kickUser(username)),
+    updateRoom: updatedRoom => dispatch(updateRoom(updatedRoom)),
+    clearMusicList: () => dispatch(clearMusicList()),
+    getTracks: username => dispatch(getMusicPage(username)),
+    addTrack: trackId => dispatch(addTrack(trackId)),
+    addPlaylist: playlistId => dispatch(addPlaylist(playlistId))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(CurrentRoomPage);

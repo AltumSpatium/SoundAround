@@ -10,7 +10,7 @@ const roomSchema = new mongoose.Schema({
     currentPlaylist: { type: String, ref: 'Playlist' },
     nowPlaying: { type: String, ref: 'Track' },
     usersOnline: [{ type: String, ref: 'User' }],
-    messages: [{ user: { type: String, ref: 'User' }, text: String, date: Date }]
+    messages: [{ user: { type: String, ref: 'User' }, content: Object, date: Date }]
 });
 
 module.exports = mongoose.model('Room', roomSchema);
