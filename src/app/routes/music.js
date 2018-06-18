@@ -97,22 +97,11 @@ const getTrack = async (req, res) => {
     }
 };
 
-const addTrack = async (req, res) => {
-    const { username, trackId } = req.params;
+const addTrack = async (username, trackId) => {
     const user = await User.findOne({ username });
-    if (!user) {
-        return res.status(404).json({ message: `No user registered with username ${username}` }); 
-    }
-
     user.tracks.push(trackId);
     User.findOneAndUpdate({ username }, { tracks: user.tracks }, {}).exec();
-    Track.findByIdAndUpdate(trackId, { $inc: { usersLinks: 1 } }, {}, err => {
-        if (err) {
-            res.status(500).json({ message: `Error while adding track` });
-        } else {
-            res.json({ message: 'Successfully added' });
-        }
-    });
+    Track.findByIdAndUpdate(trackId, { $inc: { usersLinks: 1 } }, {}).exec();
 };
 
 const updateTrack = async (req, res) => {
@@ -203,7 +192,7 @@ const uploadUserMusic = async (req, res) => {
     const filePath = req.file.path;
     saveAudio(filePath, user)
         .catch(error => res.status(500).json({ message: 'Error while saving audio' }))
-        .then(newTrack => res.json({ message: 'Saved', newTrack }));
+        .then(newTrack => res.json({ message: 'Saved', trackId: newTrack._id }));
 };
 
 module.exports = {

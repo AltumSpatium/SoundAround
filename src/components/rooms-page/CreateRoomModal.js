@@ -136,7 +136,7 @@ class CreateRoomModal extends Component {
                         {createOptions(playlists)}
                     </Select>
                     <Checkbox
-                        name='isPrivate' value={isPrivate}
+                        name='isPrivate' checked={isPrivate}
                         onChange={e => this.onChange({ target: { name: 'isPrivate', value: e.target.checked } })}>
                         Private
                     </Checkbox>

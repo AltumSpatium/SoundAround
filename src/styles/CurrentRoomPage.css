@@ -160,19 +160,74 @@ div.chat-window::-webkit-scrollbar-thumb:active {
 
 .msg {
     width: 97%;
-    margin: 5px auto;
+    margin: 8px auto;
     background-color: rgb(25, 118, 210, 0.05);
     padding: 5px;
-    right: 9px;
+    
+}
+
+.msg-active {
+    background-color: rgb(25, 118, 210, 0.2);
 }
 
 .msg-text {
 
 }
 
-.msg-author {
+.msg-info > span:first-child {
     font-size: 15px;
     font-weight: bold;
+}
+
+.msg-info > span:last-child {
+    font-size: 13px;
+    margin-left: 10px;
+}
+
+.msg-tp-wrapper {
+    border: 1px solid #64B5F6;
+    border-radius: 6px;
+    background-color: rgba(100, 181, 246, 0.5);
+    position: relative;
+}
+
+.msg-add-attachment-tp {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    font-size: 17px;
+    color: white;
+    cursor: pointer;
+    opacity: 0;
+}
+
+.msg-add-attachment-pl {
+    font-size: 17px;
+    color: white;
+    cursor: pointer;
+    right: 20px;
+    position: absolute;
+    opacity: 0;
+}
+
+.msg-tp-wrapper:hover .msg-add-attachment-tp,
+.msg-pl-wrapper:hover .msg-add-attachment-pl {
+    opacity: 1;
+    transition: 0.2s ease;
+}
+
+.msg-pl-wrapper {
+    height: 30px;
+    width: 100%;
+    border: 1px solid #64B5F6;
+    border-radius: 6px;
+    background-color: rgba(100, 181, 246, 0.5);
+    padding-top: 3px;
+}
+
+.msg-pl-wrapper .default-playlist-icon svg {
+    margin-bottom: 10px;
 }
 
 .room-aside {
@@ -254,6 +309,18 @@ div.tracklist > div::-webkit-scrollbar-thumb:active {
     text-decoration: underline;
 }
 
+.users-online__btn-ban {
+    margin-left: 3px;
+    color: red;
+    cursor: pointer;
+    opacity: 0;
+}
+
+.users-online > div:not(:first-child):hover .users-online__btn-ban {
+    transition: 0.2s ease;
+    opacity: 1;   
+}
+
 .users-online > div:first-child {
     font-size: 15px;
     font-weight: bold;
@@ -268,4 +335,46 @@ div.tracklist > div::-webkit-scrollbar-thumb:active {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+}
+
+.croom-header__settings {
+    margin-left: 5px;
+    cursor: pointer;
+    transition: 0.2s ease-in-out;
+}
+
+.croom-header__settings:hover {
+    color: #EEEEEE;
+    transition: 0.2s ease-in-out;
+}
+
+.manage-room-modal__main > button {
+    margin-bottom: 5px;
+    width: 100%;
+}
+
+.manage-room__playlist .ant-select {
+    width: 100%;
+}
+
+.chat-input__attachment {
+    font-size: 18px;
+}
+
+.chat-input__attachment > div {
+    padding: 8px;
+    cursor: pointer;
+}
+
+.chat-input__attachment > div:hover {
+    background-color: #F5F5F5;
+    transition: 0.2s ease;
+}
+
+.chat-input__attachment > div:active {
+    background-color: #EEEEEE;
+}
+
+.chat-input__attachment-overlay .ant-popover-inner-content {
+    padding: 5px 5px; 
 }

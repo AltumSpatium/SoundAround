@@ -2,10 +2,14 @@ import React, { Component } from 'react';
 import { Spin } from 'antd';
 import TrackPiece from '../shared/TrackPiece';
 import Tracklist from './Tracklist';
+import * as FaBan from 'react-icons/lib/fa/ban';
 
 class RoomAside extends Component {
     render() {
-        const { playlist, loading, room, playlistTracks } = this.props;
+        const {
+            playlist, loading, room, playlistTracks, isAdmin, kickUser,
+            currentUser
+        } = this.props;
         const trackId = room.nowPlaying;
         let track;
         let trackIndex;
@@ -36,7 +40,12 @@ class RoomAside extends Component {
                 <div className="users-online">
                     <div>Users online:</div>
                     {room.usersOnline.map(username => (
-                        <div>{username}</div>
+                        <div key={username}>
+                            <span>{username}</span>
+                            {currentUser && isAdmin() && currentUser.username !== username && (
+                                <span className='users-online__btn-ban' onClick={() => kickUser(username)}><FaBan /></span>
+                            )}
+                        </div>
                     ))}
                 </div>
             </div>

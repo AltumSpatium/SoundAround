@@ -148,11 +148,11 @@ class RoomsPage extends Component {
         const currentRoom = currentUser.currentRoom;
 
         if (!currentRoom || currentRoom && currentRoom === room._id) {
-            this.props.history.push(`/rooms/${room._id}`);
+            this.props.history.push(`/rooms/${room._id}`, { allowed: true });
         } else {
             this.io.emit('exitRoom', { roomId: currentRoom, username: currentUser.username });
             this.props.exitRoom(currentUser.username, currentRoom).then(() => {
-                this.props.history.push(`/rooms/${room._id}`);
+                this.props.history.push(`/rooms/${room._id}`, { allowed: true });
             });
         }
     }
@@ -160,7 +160,7 @@ class RoomsPage extends Component {
     render() {
         const {
             chosenRoom, createModal, deleteModal, search,
-            activeTab, roomToDelete
+            activeTab, roomToDelete, currentUser
         } = this.state;
         const { rooms, loading, hasMore } = this.props;
         const userRooms = rooms.filter(this.isRoomAuthor);

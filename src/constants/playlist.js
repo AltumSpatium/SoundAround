@@ -41,3 +41,5 @@ export const DELETE_PLAYLIST_FAIL = 'DELETE_PLAYLIST_FAIL';
 export const SET_PLAYLIST_TRACKLIST = 'SET_PLAYLIST_TRACKLIST';
 
 export const defaultPlaylistPicture = <div className="default-playlist-icon"><QueueMusic /></div>;
+
+export const ADD_PLAYLIST = 'ADD_PLAYLIST';

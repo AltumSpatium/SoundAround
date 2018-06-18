@@ -74,8 +74,20 @@ const createRoom = async (req, res) => {
     });
 };
 
-const updateRoom = async (req, res) => {
+const updateRoom = async (roomId, field, value) => {
+    let updateObj = {};
+    if (field === 'roomPlaylist') {
+        updateObj.currentPlaylist = value;
+    } else if (field === 'privacy') {
+        const { isPrivate, password } = value;
+        updateObj.public = !isPrivate;
+        updateObj.password = isPrivate ? password : '';
+    } else {
+        updateObj[field] = value;
+    }
 
+    const updatedRoom = await Room.findByIdAndUpdate(roomId, updateObj, { new: true });
+    return updatedRoom;
 };
 
 const deleteRoom = async (req, res) => {
@@ -123,7 +135,6 @@ const getRoom = async (req, res) => {
 
 const enterRoom = async (roomId, username) => {
     const room = await Room.findById(roomId);
-    const user = await User.findOne({ username });
     if (!room.usersOnline.includes(username)) {
         room.usersOnline.push(username);
         Room.findByIdAndUpdate(roomId, { usersOnline: room.usersOnline }).exec();
@@ -183,7 +194,11 @@ const sendMessage = async (roomId, username, message) => {
     return message;
 };
 
+const kickUser = async (roomId, username) => {
+    return exitRoom(roomId, username);
+};
+
 module.exports = {
     getRoomsPage, createRoom, getRoom, getRoomPlaylist, enterRoom, deleteRoom,
-    exitRoom, sendMessage
+    exitRoom, sendMessage, kickUser, updateRoom
 };

@@ -31,11 +31,11 @@ const {
 } = require('./src/app/routes/music');
 const {
     getUserPlaylist, createPlaylist, getPlaylistTracks,
-    updatePlaylist, getPlaylists, deletePlaylist
+    updatePlaylist, getPlaylists, deletePlaylist, addPlaylist
 } = require('./src/app/routes/playlist');
 const {
     getRoomsPage, createRoom, getRoom, getRoomPlaylist, deleteRoom,
-    enterRoom, exitRoom, sendMessage
+    enterRoom, exitRoom, sendMessage, kickUser, updateRoom
 } = require('./src/app/routes/room');
 
 const app = new Express();
@@ -129,5 +129,29 @@ io.on('connection', client => {
     client.on('deleteRoom', async obj => {
         const { roomId } = obj;
         io.to(roomId).emit('deleteRoom');
+    });
+
+    client.on('kickUser', async obj => {
+        const { roomId, username } = obj;
+        await kickUser(roomId, username);
+        io.to(roomId).emit('kickUser', username);
+    });
+
+    client.on('updateRoom', async obj => {
+        const { roomId, field, value } = obj;
+        const updatedRoom = await updateRoom(roomId, field, value);
+        io.to(roomId).emit('updateRoom', updatedRoom);
+    });
+
+    client.on('addTrack', async obj => {
+        const { username, trackId } = obj;
+        await addTrack(username, trackId);
+        client.emit('addTrack', trackId);
+    });
+
+    client.on('addPlaylist', async obj => {
+        const { username, playlistId } = obj;
+        await addPlaylist(username, playlistId);
+        client.emit('addPlaylist', playlistId);
     });
 });

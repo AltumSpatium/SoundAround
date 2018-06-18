@@ -2,11 +2,11 @@ import {
     GET_ROOMS_REQUEST, GET_ROOMS_SUCCESS, GET_ROOMS_FAIL,
     GET_ROOM_REQUEST, GET_ROOM_SUCCESS, GET_ROOM_FAIL,
     CREATE_ROOM_REQUEST, CREATE_ROOM_SUCCESS, CREATE_ROOM_FAIL,
-    UPDATE_ROOM_REQUEST, UPDATE_ROOM_SUCCESS, UPDATE_ROOM_FAIL,
+    UPDATE_ROOM,
     DELETE_ROOM_REQUEST, DELETE_ROOM_SUCCESS, DELETE_ROOM_FAIL,
     GET_ROOM_PLAYLIST_REQUEST, GET_ROOM_PLAYLIST_SUCCESS, GET_ROOM_PLAYLIST_FAIL,
     CLEAR_ROOMS,
-    USER_ENTERED_ROOM, USER_EXITED_ROOM, RECEIVE_MESSAGE
+    USER_ENTERED_ROOM, USER_EXITED_ROOM, RECEIVE_MESSAGE, KICK_USER
 } from '../constants/room';
 import {
     request, success, fail, callAPI
@@ -102,7 +102,7 @@ export const getRoomPlaylist = (roomId, playlistId, userId) => {
                 'x-access-token': localStorage.getItem('sa_token')
             }
         },
-        requestAction: () => { console.log('REQUESTING'); return getRoomPlaylistRequest() },
+        requestAction: getRoomPlaylistRequest,
         successAction: getRoomPlaylistSuccess,
         failAction: getRoomPlaylistFail
     });
@@ -113,13 +113,17 @@ const clearRoomsRequest = request(CLEAR_ROOMS);
 export const clearRooms = () => async dispatch => dispatch(clearRoomsRequest());
 
 const userEnteredRoomSuccess = success(USER_ENTERED_ROOM);
-
-export const enterRoom = (username, roomId) => async dispatch => dispatch(userEnteredRoomSuccess({ username, roomId }));
-
 const userExitedRoomSuccess = success(USER_EXITED_ROOM);
 
+export const enterRoom = (username, roomId) => async dispatch => dispatch(userEnteredRoomSuccess({ username, roomId }));
 export const exitRoom = (username, roomId) => async dispatch => dispatch(userExitedRoomSuccess({ username, roomId }));
 
 const receiveMessageSuccess = success(RECEIVE_MESSAGE);
 
 export const receiveMessage = message => async dispatch => dispatch(receiveMessageSuccess(message));
+
+const kickUserSuccess = success(KICK_USER);
+const updateRoomSuccess = success(UPDATE_ROOM);
+
+export const kickUser = username => async dispatch => dispatch(kickUserSuccess(username));
+export const updateRoom = updatedRoom => async dispatch => dispatch(updateRoomSuccess(updatedRoom));

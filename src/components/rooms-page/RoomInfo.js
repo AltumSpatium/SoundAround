@@ -49,12 +49,12 @@ class RoomInfo extends Component {
     }
 
     enterRoom() {
-        const { room, onEnterRoom } = this.props;
+        const { room, onEnterRoom, currentUser } = this.props;
         if (!room) return;
 
-        if (!room.public) {
-            this.showModal('passwordModal');
-        } else onEnterRoom(room);
+        if (room.public || room.authorId === currentUser._id) {
+            onEnterRoom(room);
+        } else this.showModal('passwordModal');
     }
 
     render() {
@@ -103,6 +103,7 @@ RoomInfo.propTypes = {
 };
 
 const mapStateToProps = state => ({
+    currentUser: state.user.currentUser,
     track: state.music.track,
     loadingTrack: state.music.loadingTrack,
 });
