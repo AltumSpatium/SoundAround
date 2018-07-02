@@ -1,5 +1,9 @@
 import React, { Component } from 'react';
 import { List, Icon } from 'antd';
+import { connect } from 'react-redux';
+import {
+    setVisibility, setPlayerPlaylist, clearPlayerPlaylist
+} from '../../actions/player';
 import { beautifyDuration, createPicture } from '../../util/trackUtil';
 
 class Track extends Component {
@@ -13,6 +17,7 @@ class Track extends Component {
         this.albumCover = createPicture(props.track.picture);
 
         this.toggleLyrics = this.toggleLyrics.bind(this);
+        this.playTrack = this.playTrack.bind(this);
     }
 
     toggleLyrics() {
@@ -20,14 +25,41 @@ class Track extends Component {
         this.setState({ lyricsVisible });
     }
 
+    playTrack() {
+        const {
+            track, setPlayerPlaylist, setVisibility,
+            clearPlayerPlaylist, tracks
+        } = this.props;
+        clearPlayerPlaylist();
+
+        const playlistTracks = tracks.map(t => t._id);
+        const startIndex = playlistTracks.indexOf(track._id);
+
+        setVisibility(true);
+        const playlist = { id: 'tracks', tracks: playlistTracks, startIndex };
+        setPlayerPlaylist(playlist);
+    }
+
     render() {
-        const { track, onEditClick, onDeleteClick } = this.props;
+        const { track, nowPlaying } = this.props;
         const { lyricsVisible } = this.state;
+
+        const onEditClick = e => {
+            e.stopPropagation();
+            this.props.onEditClick();
+        };
+
+        const onDeleteClick = e => {
+            e.stopPropagation();
+            this.props.onDeleteClick();
+        };
 
         return (
             <div>
                 <List.Item key={track._id}>
-                    <div className="track-item">
+                    <div
+                        className={`track-item ${nowPlaying === track._id ? 'track-np' : ''}`}
+                        onClick={this.playTrack}>
                         <div className="track-item__picture">
                             {this.albumCover}
                         </div>
@@ -66,4 +98,15 @@ class Track extends Component {
     }
 }
 
-export default Track;
+const mapStateToProps = state => ({
+    nowPlaying: state.player.nowPlaying,
+    tracks: state.music.tracks
+});
+
+const mapDispatchToProps = dispatch => ({
+    setVisibility: visible => dispatch(setVisibility(visible)),
+    setPlayerPlaylist: playlist => dispatch(setPlayerPlaylist(playlist)),
+    clearPlayerPlaylist: () => dispatch(clearPlayerPlaylist())
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Track);

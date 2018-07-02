@@ -7,6 +7,7 @@ export const GET_TRACK_SUCCESS = 'GET_TRACK_SUCCESS';
 export const GET_TRACK_FAIL = 'GET_TRACK_FAIL';
 
 export const CLEAR_MUSIC_LIST = 'CLEAR_MUSIC_LIST';
+export const CLEAR_TRACK = 'CLEAR_TRACK';
 
 export const sortOptions = [
     { title: 'By default', value: 'uploadDate' },

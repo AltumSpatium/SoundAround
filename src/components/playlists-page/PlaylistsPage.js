@@ -199,7 +199,7 @@ class PlaylistsPage extends Component {
                             this.props.clearPlaylistPage();
                         });
                     }}
-                    tracks={playlistTracks} loading={playlistTracksLoading} hasMore={playlistTracksHasMore}
+                    playlistTracks={playlistTracks} loading={playlistTracksLoading} hasMore={playlistTracksHasMore}
                     loadMore={page => this.loadMorePlaylists(page)} currentUser={currentUser} />
 
                 <DeletePlaylistModal

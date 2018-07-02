@@ -63,7 +63,7 @@ class CreateRoomModal extends Component {
             name, description, password,
             public: !isPrivate,
             currentPlaylist: roomPlaylist,
-            nowPlaying: '5b212cb259f04c11c8e9fdce'
+            nowPlaying: null
         };
 
         createRoom(currentUser.username, roomData)

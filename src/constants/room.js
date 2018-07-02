@@ -28,3 +28,5 @@ export const USER_EXITED_ROOM = 'USER_EXITED_ROOM';
 export const RECEIVE_MESSAGE = 'RECEIVE_MESSAGE';
 
 export const KICK_USER = 'KICK_USER';
+
+export const SET_ROOM_NOW_PLAYING = 'SET_ROOM_NOW_PLAYING';

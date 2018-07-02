@@ -6,6 +6,7 @@ const jsonParser = bodyParser.json({limit: '50mb'});
 const urlencodedParser = bodyParser.urlencoded({limit: '50mb', extended: true});
 const socketio = require('socket.io');
 
+const audioDirname = path.join(__dirname, '/build/audio');
 const uploadsDirname = path.join(__dirname , '/build/uploads');
 const multer = require('multer');
 const upload = multer({
@@ -17,6 +18,10 @@ const upload = multer({
 
 if (!fs.existsSync(uploadsDirname)) {
     fs.mkdirSync(uploadsDirname)
+}
+
+if (!fs.existsSync(audioDirname)) {
+    fs.mkdirSync(audioDirname);
 }
 
 const mongoose = require('mongoose');
@@ -153,5 +158,11 @@ io.on('connection', client => {
         const { username, playlistId } = obj;
         await addPlaylist(username, playlistId);
         client.emit('addPlaylist', playlistId);
+    });
+
+    client.on('playTrack', async obj => {
+        const { roomId, trackId, startIndex } = obj;
+        await updateRoom(roomId, 'nowPlaying', trackId);
+        client.broadcast.to(roomId).emit('playTrack', { startIndex, trackId });
     });
 });

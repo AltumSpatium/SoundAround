@@ -129,3 +129,122 @@
 .page-active * {
     background-color: #1565C0;
 }
+
+.music-player {
+    height: 60px;
+    position: fixed;
+    bottom: 0;
+    background-color: #0288D1;
+    width: 100%;
+    z-index: 99999;
+}
+
+.music-player__track {
+    height: 60px;
+    width: 550px;
+    position: absolute;
+    left: 100px;
+}
+
+.music-player__track-info {
+    font-size: 20px;
+    color: white;
+    max-width: 550px;
+    height: 25px;
+    overflow: hidden;
+    word-wrap: nowrap;
+    text-overflow: ellipsis;
+}
+
+.music-player__progress {
+    height: 35px;
+    position: relative;
+}
+
+.music-player__progress > span:first-child {
+    color: white;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 10px;
+}
+
+.music-player__progress > span:last-child {
+    color: white;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 10px;
+}
+
+.music-player__slider {
+    width: 450px;
+    position: absolute !important;
+    top: -2px !important;
+    left: 49%;
+    transform: translateX(-50%);
+}
+
+.music-player__controls {
+    height: 60px;
+    position: absolute;
+    left: 650px;
+    width: 250px;
+    color: white;
+    font-size: 40px;
+}
+
+.music-player__controls > span {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+.music-player__controls > span:nth-child(2) {
+    top: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.music-player__controls > span:first-child {
+    left: 20%;
+}
+
+.music-player__controls > span:last-child {
+    right: 20%;
+}
+
+.music-player__close {
+    color: white;
+    cursor: pointer;
+    position: absolute;
+    font-size: 18px;
+    top: 0;
+    right: 3px;
+}
+
+.music-player__volume {
+    width: 200px;
+    position: absolute;
+    left: 900px;
+    height: 60px;
+}
+
+.music-player__volume > span:last-child {
+    font-size: 25px;
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: white;
+    cursor: pointer;
+}
+
+.music-player__volume-slider {
+    width: 150px;
+    position: absolute;
+    left: 5px;
+    top: 30%;
+    transform: translateY(-50%);
+}

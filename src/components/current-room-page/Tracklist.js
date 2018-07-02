@@ -4,7 +4,7 @@ import TrackPiece from '../shared/TrackPiece';
 
 class Tracklist extends Component {
     render() {
-        const { playlist, tracks, playingTrackIndex } = this.props;
+        const { playlist, tracks, playingTrackIndex, playTrack } = this.props;
 
         return (
             <div className="tracklist">
@@ -16,7 +16,7 @@ class Tracklist extends Component {
                     {tracks.map((track, index) => (
                         <div
                             className={`croom__now-playing-wrap ${index === playingTrackIndex ? 'tracklist-np' : ''}`}
-                            key={index}>
+                            key={index}  onClick={() => playTrack(track)}>
                             <TrackPiece track={track} />
                         </div>
                     ))}

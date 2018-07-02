@@ -1,11 +1,12 @@
 .current-room-page {
     position: relative;
+    height: 510px;
 }
 
 .room-main {
     background-color: rgb(25, 118, 210, 0.3);
     width: 600px;
-    height: 530px;
+    height: 510px;
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
@@ -41,7 +42,7 @@
 .chat-window {
     margin: 15px auto 0 auto;
     width: 95%;
-    height: 420px;
+    height: 400px;
     border: 1px solid rgb(25, 118, 210, 0.4);
     border-top-right-radius: 5px;
     border-top-left-radius: 5px;

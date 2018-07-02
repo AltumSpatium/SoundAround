@@ -4,7 +4,7 @@ import {
     UPLOAD_TRACK_REQUEST, UPLOAD_TRACK_SUCCESS, UPLOAD_TRACK_FAIL,
     UPDATE_TRACK_REQUEST, UPDATE_TRACK_SUCCESS, UPDATE_TRACK_FAIL,
     DELETE_TRACK_REQUEST, DELETE_TRACK_SUCCESS, DELETE_TRACK_FAIL,
-    CLEAR_MUSIC_LIST, SET_MUSIC_TRACKLIST
+    CLEAR_MUSIC_LIST, SET_MUSIC_TRACKLIST, CLEAR_TRACK
 } from '../constants/music';
 
 const initialState = {
@@ -14,6 +14,7 @@ const initialState = {
     isUploadingAudio: false,
 
     track: null,
+    trackFilename: null,
     loadingTrack: false
 };
 
@@ -30,11 +31,14 @@ const music = (state=initialState, action) => {
         case GET_TRACK_REQUEST:
             return { ...state, loadingTrack: true };
         case GET_TRACK_SUCCESS:
-            return { ...state, loadingTrack: false, track: action.payload };
+            const { track, trackFilename } = action.payload;
+            return { ...state, loadingTrack: false, track, trackFilename };
         case GET_TRACK_FAIL:
             return { ...state, loadingTrack: false };
         case CLEAR_MUSIC_LIST:
-            return { ...initialState };
+            return { ...initialState, track: state.track, trackFilename: state.trackFilename };
+        case CLEAR_TRACK:
+            return { ...state, track: null, trackFilename: null };
         case UPLOAD_TRACK_REQUEST:
             return { ...state, isUploadingAudio: true };
         case UPLOAD_TRACK_SUCCESS:

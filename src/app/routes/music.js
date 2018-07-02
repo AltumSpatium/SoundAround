@@ -91,9 +91,20 @@ const getTrack = async (req, res) => {
 
     const { onlyInfo } = req.query;
     if (onlyInfo == 1) {
-        return res.send(track);
+        return res.send({ track });
     } else {
+        const gfs = new GridFS(mongoose.connection.db);
+        const gfsReadStream = gfs.createReadStream({ _id: track.trackId });
 
+        const trackName = `${track._id}.${track.dataFormat}`;
+        const writeFilename = path.join(__dirname, `../../../build/audio/${trackName}`);
+        if (!fs.existsSync(writeFilename)) {
+            const fsWriteStream = fs.createWriteStream(writeFilename);
+            gfsReadStream.pipe(fsWriteStream);
+            fsWriteStream.on('close', () => {
+                res.send({ track, trackFilename: `/audio/${trackName}` });
+            });
+        } else res.send({ track, trackFilename: `/audio/${trackName}` });
     }
 };
 

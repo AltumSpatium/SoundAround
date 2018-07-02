@@ -145,11 +145,24 @@ class Chat extends Component {
         let data;
         switch (attachType) {
             case 'playlist':
-                data = this.props.playlists.filter(p => p._id === attachValue)[0];
+                const playlist = this.props.playlists.filter(p => p._id === attachValue)[0]
+                data = {
+                    _id: playlist._id,
+                    authorId: playlist.authorId,
+                    title: playlist.title
+                };
                 break;
             case 'track':
             default:
-                data = this.props.tracks.filter(t => t._id === attachValue)[0];
+                const track = this.props.tracks.filter(t => t._id === attachValue)[0];
+                data = {
+                    _id: track._id,
+                    trackId: track.trackId,
+                    duration: track.duration,
+                    title: track.title,
+                    artist: track.artist,
+                    album: track.album,
+                };
                 break;
         }
         const message = {
@@ -167,7 +180,7 @@ class Chat extends Component {
             messageText, attachVisible, attachModal, attachValue,
             attachModalContent, attachModalTitle
         } = this.state;
-        const reversedMessages = messages.slice().reverse();
+        const reversedMessages = messages ? messages.slice().reverse() : [];
 
         return (
             <div>

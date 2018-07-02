@@ -4,7 +4,7 @@ import * as TiNotes from 'react-icons/lib/ti/notes';
 export const beautifyDuration = duration => {
     const minutes = Math.floor(duration / 60);
     const seconds = Math.floor(duration) - minutes * 60;
-    return `${minutes}:${seconds}`;
+    return `${minutes}:${(seconds < 10 ? '0': '') + seconds}`;
 };
 
 export const createPicture = (picture, defaultPicture) => {

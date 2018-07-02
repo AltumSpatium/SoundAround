@@ -4,7 +4,7 @@ import {
     UPLOAD_TRACK_REQUEST, UPLOAD_TRACK_SUCCESS, UPLOAD_TRACK_FAIL,
     UPDATE_TRACK_REQUEST, UPDATE_TRACK_SUCCESS, UPDATE_TRACK_FAIL,
     DELETE_TRACK_REQUEST, DELETE_TRACK_SUCCESS, DELETE_TRACK_FAIL,
-    CLEAR_MUSIC_LIST, SET_MUSIC_TRACKLIST, ADD_TRACK
+    CLEAR_MUSIC_LIST, SET_MUSIC_TRACKLIST, ADD_TRACK, CLEAR_TRACK
 } from '../constants/music';
 import {
     request, success, fail, callAPI
@@ -52,6 +52,12 @@ const clearMusicListRequest = request(CLEAR_MUSIC_LIST);
 
 export const clearMusicList = () => async dispatch => {
     return await dispatch(clearMusicListRequest());
+};
+
+const clearTrackRequest = request(CLEAR_TRACK);
+
+export const clearTrack = () => async dispatch => {
+    return await dispatch(clearTrackRequest());
 };
 
 const uploadTrackRequest = request(UPLOAD_TRACK_REQUEST);

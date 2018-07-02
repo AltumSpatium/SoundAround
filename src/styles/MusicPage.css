@@ -297,3 +297,7 @@ button.sa-btn-error:focus {
     font-size: 15px;
     font-weight: bold;
 }
+
+.track-np {
+    background-color: rgb(25, 118, 210, 0.5) !important;
+}

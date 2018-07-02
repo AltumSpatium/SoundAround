@@ -4,7 +4,7 @@ import '../../styles/SettingsPage.css';
 
 class SettingsPage extends Component {
     componentDidMount() {
-
+        
     }
 
     render() {

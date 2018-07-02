@@ -5,7 +5,7 @@ import {
     UPDATE_ROOM,
     DELETE_ROOM_REQUEST, DELETE_ROOM_SUCCESS, DELETE_ROOM_FAIL,
     GET_ROOM_PLAYLIST_REQUEST, GET_ROOM_PLAYLIST_SUCCESS, GET_ROOM_PLAYLIST_FAIL,
-    CLEAR_ROOMS,
+    CLEAR_ROOMS, SET_ROOM_NOW_PLAYING,
     USER_ENTERED_ROOM, USER_EXITED_ROOM, RECEIVE_MESSAGE,
     KICK_USER
 } from '../constants/room';
@@ -77,16 +77,22 @@ const room = (state=initialState, action) => {
             return { ...state, room: roomExit };
         case RECEIVE_MESSAGE:
             const roomMsg = { ...state.room };
-            roomMsg.messages.push(action.payload);
+            if (roomMsg.messages) roomMsg.messages.push(action.payload);
             return { ...state, room: roomMsg };
         case KICK_USER:
             const roomKick = { ...state.room };
-            roomKick.usersOnline.splice(roomKick.usersOnline.indexOf(action.payload), 1);
+            if (roomKick.usersOnline) roomKick.usersOnline.splice(roomKick.usersOnline.indexOf(action.payload), 1);
             return { ...state, room: roomKick };
         case UPDATE_ROOM:
             return { ...state, room: action.payload };
         case CLEAR_PLAYLIST:
             return { ...state, roomPlaylistTracks: [], loadingRoomPlaylistTracks: false };
+        case SET_ROOM_NOW_PLAYING:
+            const roomNowPlaying = { ...state.room };
+            console.log(roomNowPlaying.nowPlaying);
+            console.log(action.payload);
+            roomNowPlaying.nowPlaying = action.payload;
+            return { ...state, room: roomNowPlaying };
         default:
             return state;
     }

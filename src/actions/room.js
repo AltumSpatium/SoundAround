@@ -5,7 +5,7 @@ import {
     UPDATE_ROOM,
     DELETE_ROOM_REQUEST, DELETE_ROOM_SUCCESS, DELETE_ROOM_FAIL,
     GET_ROOM_PLAYLIST_REQUEST, GET_ROOM_PLAYLIST_SUCCESS, GET_ROOM_PLAYLIST_FAIL,
-    CLEAR_ROOMS,
+    CLEAR_ROOMS, SET_ROOM_NOW_PLAYING,
     USER_ENTERED_ROOM, USER_EXITED_ROOM, RECEIVE_MESSAGE, KICK_USER
 } from '../constants/room';
 import {
@@ -124,6 +124,8 @@ export const receiveMessage = message => async dispatch => dispatch(receiveMessa
 
 const kickUserSuccess = success(KICK_USER);
 const updateRoomSuccess = success(UPDATE_ROOM);
+const setRoomNowPlayingSuccess = success(SET_ROOM_NOW_PLAYING);
 
 export const kickUser = username => async dispatch => dispatch(kickUserSuccess(username));
 export const updateRoom = updatedRoom => async dispatch => dispatch(updateRoomSuccess(updatedRoom));
+export const setRoomNowPlaying = trackId => async dispatch => dispatch(setRoomNowPlayingSuccess(trackId));

@@ -8,13 +8,18 @@ import RoomMain from './RoomMain';
 import ManageRoomModal from './ManageRoomModal';
 import {
     getRoom, clearRooms, getRoomPlaylist, enterRoom,
-    exitRoom, receiveMessage, kickUser, updateRoom
+    exitRoom, receiveMessage, kickUser, updateRoom,
+    setRoomNowPlaying
 } from '../../actions/room';
 import {
     getPlaylist, clearPlaylist, getPlaylists, addPlaylist
 } from '../../actions/playlist';
+import {
+    setVisibility, setPlayerPlaylist, clearPlayerPlaylist
+} from '../../actions/player';
 import { clearMusicList, getMusicPage, addTrack } from '../../actions/music';
 import { showMessage } from '../../util/toastrUtil';
+import { Howl, Howler } from 'howler';
 
 import '../../styles/CurrentRoomPage.css';
 
@@ -38,6 +43,7 @@ class CurrentRoomPage extends Component {
         this.updateRoom = this.updateRoom.bind(this);
         this.addPlaylist = this.addPlaylist.bind(this);
         this.addTrack = this.addTrack.bind(this);
+        this.playTrack = this.playTrack.bind(this);
     }
 
     hideModal = (modalName, cb, timeout=0) => {
@@ -60,7 +66,7 @@ class CurrentRoomPage extends Component {
         this.props.clearPlaylist();
         this.props.clearMusicList();
         this.props.clearRooms();
-        this.io.disconnect();
+        this.io.close();
     }
 
     addTrack(track) {
@@ -99,6 +105,22 @@ class CurrentRoomPage extends Component {
         this.io.on('updateRoom', updatedRoom => this.props.updateRoom(updatedRoom));
         this.io.on('addTrack', trackId => this.props.addTrack(trackId));
         this.io.on('addPlaylist', playlistId => this.props.addPlaylist(playlistId));
+        this.io.on('playTrack', ({ trackId, startIndex }) => {
+            const {
+                setPlayerPlaylist, setVisibility, setRoomNowPlaying,
+                clearPlayerPlaylist, playlistTracks, roomPlaylist
+            } = this.props;
+            clearPlayerPlaylist();
+    
+            const tracks = playlistTracks.map(t => t._id);
+            
+            setVisibility(true);
+            const playlist = { id: roomPlaylist._id, tracks, startIndex };
+            setPlayerPlaylist(playlist);
+            setRoomNowPlaying(trackId);
+        });
+
+        
     }
 
     exitRoom() {
@@ -159,6 +181,25 @@ class CurrentRoomPage extends Component {
         if (!userEntered) this.enterRoom();
     }
 
+    playTrack(track) {
+        if (!this.isAdmin()) return;
+
+        const {
+            setPlayerPlaylist, setVisibility, setRoomNowPlaying,
+            clearPlayerPlaylist, playlistTracks, roomPlaylist
+        } = this.props;
+        clearPlayerPlaylist();
+
+        const tracks = playlistTracks.map(t => t._id);
+        const startIndex = tracks.indexOf(track._id);
+        
+        setVisibility(true);
+        const playlist = { id: roomPlaylist._id, tracks, startIndex };
+        setPlayerPlaylist(playlist);
+        setRoomNowPlaying(track._id);
+        this.io.emit('playTrack', { roomId: this.roomId, trackId: track._id, startIndex });
+    }
+
     render() {
         if (!this.props.location.state || this.props.location.state && !this.props.location.state.allowed) {
             return (
@@ -169,7 +210,7 @@ class CurrentRoomPage extends Component {
         const { manageModal } = this.state;
         const {
             room, enteringRoom, roomPlaylist, loadingPlaylist,
-            playlistTracks, currentUser, playlists
+            playlistTracks, currentUser, playlists, nowPlaying
         } = this.props;
         if (!room) {
             if (enteringRoom) {
@@ -196,9 +237,10 @@ class CurrentRoomPage extends Component {
                     isAdmin={this.isAdmin} onSettingClick={() => this.showModal('manageModal')}
                     addTrack={this.addTrack} addPlaylist={this.addPlaylist} />
                 <RoomAside
-                    playlist={roomPlaylist} loading={loadingPlaylist} room={room}
+                    playlist={roomPlaylist} loading={loadingPlaylist}
                     playlistTracks={playlistTracks} isAdmin={this.isAdmin}
-                    kickUser={this.kickUser} currentUser={currentUser} />
+                    kickUser={this.kickUser} currentUser={currentUser}
+                    playTrack={this.playTrack} nowPlaying={nowPlaying} />
 
                 <ManageRoomModal
                     isVisible={manageModal} onCloseClick={() => this.hideModal('manageModal')}
@@ -216,7 +258,8 @@ const mapStateToProps = state => ({
     loadingPlaylist: state.playlist.loadingPlaylist,
     playlists: state.playlist.playlists,
     playlistTracks: state.room.roomPlaylistTracks,
-    playlistTracksLoading: state.room.loadingRoomPlaylistTracks
+    playlistTracksLoading: state.room.loadingRoomPlaylistTracks,
+    nowPlaying: state.player.nowPlaying
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -234,7 +277,11 @@ const mapDispatchToProps = dispatch => ({
     clearMusicList: () => dispatch(clearMusicList()),
     getTracks: username => dispatch(getMusicPage(username)),
     addTrack: trackId => dispatch(addTrack(trackId)),
-    addPlaylist: playlistId => dispatch(addPlaylist(playlistId))
+    addPlaylist: playlistId => dispatch(addPlaylist(playlistId)),
+    setVisibility: visible => dispatch(setVisibility(visible)),
+    setPlayerPlaylist: playlist => dispatch(setPlayerPlaylist(playlist)),
+    clearPlayerPlaylist: () => dispatch(clearPlayerPlaylist()),
+    setRoomNowPlaying: trackId => dispatch(setRoomNowPlaying(trackId))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(CurrentRoomPage);

@@ -60,15 +60,12 @@ class ChatMessage extends Component {
                 );
                 break;
             case 'playlist':
-                if (!this.playlistPicture)
-                    this.playlistPicture = createPicture(data.playlistPicture, defaultPlaylistPicture);
                 message = (
                     <MessageContainer
                         content={
                             <div className="msg-pl-wrapper">
                                 <div className='create-playlist-select-option'>
-                                    {this.playlistPicture}
-                                    <span>{data.title}</span>
+                                    <span>Playlist: {data.title}</span>
                                     <span className='msg-add-attachment-pl' onClick={() => addPlaylist(data)}>
                                         {checkAddedPlaylist(data) ? <Icon type='check' /> : <Icon type='plus' />}
                                     </span>

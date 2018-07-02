@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { Icon } from 'antd';
+import MusicPlayer from '../shared/MusicPlayer';
+import openSocket from 'socket.io-client';
 import LoadingBar from 'react-redux-loading-bar';
 import PropTypes from 'prop-types';
 import AppHeader from './AppHeader';
@@ -44,20 +46,23 @@ class App extends Component {
         return (
             <div className="app">
                 <LoadingBar style={{ height: '2px', backgroundColor: 'red' }} />
-                <AppHeader onLogoutClick={this.onLogoutClick} isActive={isActive} />
+                <AppHeader
+                    onLogoutClick={this.onLogoutClick} isActive={isActive} />
                 <section className='page-main-content'>
                     {this.props.children}
                 </section>
                 <div className="up-arrow hide" onClick={() => window.scrollTo(0, 0)}>
                     <Icon type='up' />
                 </div>
+
+                <MusicPlayer />
             </div>
         );
     }
 }
 
 const mapStateToProps = state => ({
-    currentUser: state.user.currentUser
+    currentUser: state.user.currentUser,
 });
 const mapDispatchToProps = dispatch => ({
     logout: () => dispatch(logout())

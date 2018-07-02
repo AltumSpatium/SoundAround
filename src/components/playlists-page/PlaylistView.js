@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import moment from 'moment';
+import { connect } from 'react-redux';
 import { Button, List, Spin, Modal } from 'antd';
+import {
+    setVisibility, setPlayerPlaylist, clearPlayerPlaylist
+} from '../../actions/player';
 import InfiniteScroll from 'react-infinite-scroller';
 import { createPicture, beautifyDuration } from '../../util/trackUtil';
 import { defaultPlaylistPicture } from '../../constants/playlist';
@@ -27,10 +31,13 @@ class PlaylistView extends Component {
         this.setState({ page: page + 1 });
     }
 
-    renderListItem(track) {
+    renderListItem(track, index) {
+        const { nowPlaying } = this.props;
         return (
             <List.Item key={track._id}>
-                <div className="playlist-view__track-piece-wrapper">
+                <div
+                    className={`playlist-view__track-piece-wrapper ${nowPlaying === track._id ? 'track-np' : ''}`}
+                    onClick={() => this.listenPlaylist(index)}>
                     <TrackPiece track={track} />
                 </div>
             </List.Item>
@@ -43,13 +50,24 @@ class PlaylistView extends Component {
         }
     }
 
-    listenPlaylist() {
+    listenPlaylist(index=0) {
+        const {
+            setPlayerPlaylist, setVisibility,
+            clearPlayerPlaylist, playlistTracks, playlist
+        } = this.props;
+        clearPlayerPlaylist();
 
+        const tracks = playlistTracks.map(t => t._id);
+        const startIndex = index;
+
+        setVisibility(true);
+        const playlistT = { id: playlist._id, tracks, startIndex };
+        setPlayerPlaylist(playlistT);
     }
 
     render() {
         const {
-            onCloseView, isVisible, tracks, loading, hasMore,
+            onCloseView, isVisible, playlistTracks: tracks, loading, hasMore,
             currentUser, editPlaylist
         } = this.props;
         const playlist = this.props.playlist || {};
@@ -104,7 +122,7 @@ class PlaylistView extends Component {
                             <div><span>Created:</span> {moment(playlist.createdDate).format('DD.MM.YYYY')}</div>
                             <div><span>Updated:</span> {moment(playlist.lastUpdatedDate).format('DD.MM.YYYY')}</div>
                         </div>
-                        <Button onClick={this.listenPlaylist} className='sa-btn playlist-view__btn-listen'>Listen</Button>
+                        <Button onClick={() => this.listenPlaylist()} className='sa-btn playlist-view__btn-listen'>Listen</Button>
                         <div className="playlist-view__tracks-info">
                             {
                                 <span title={`Tracks count: ${tracksCount}`}>
@@ -125,4 +143,15 @@ class PlaylistView extends Component {
     }
 }
 
-export default PlaylistView;
+const mapStateToProps = state => ({
+    nowPlaying: state.player.nowPlaying,
+    tracks: state.music.tracks
+});
+
+const mapDispatchToProps = dispatch => ({
+    setVisibility: visible => dispatch(setVisibility(visible)),
+    setPlayerPlaylist: playlist => dispatch(setPlayerPlaylist(playlist)),
+    clearPlayerPlaylist: () => dispatch(clearPlayerPlaylist())
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(PlaylistView);

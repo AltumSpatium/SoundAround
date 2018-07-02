@@ -8,6 +8,7 @@ import CreateRoomModal from './CreateRoomModal';
 import DeleteRoomModal from './DeleteRoomModal';
 import { Button, Input, Tabs, Icon } from 'antd';
 import { getRooms, clearRooms, deleteRoom, exitRoom } from '../../actions/room';
+import { clearTrack } from '../../actions/music';
 
 import '../../styles/RoomsPage.css';
 
@@ -66,6 +67,7 @@ class RoomsPage extends Component {
 
     componentWillUnmount() {
         this.props.clearRooms();
+        this.props.clearTrack();
         window.removeEventListener('keyup', this.onKeyUp);
     }
 
@@ -246,7 +248,8 @@ const mapDispatchToProps = dispatch => ({
     getRooms: (page, pageSize, search) => dispatch(getRooms(page, pageSize, search)),
     deleteRoom: roomId => dispatch(deleteRoom(roomId)),
     clearRooms: () => dispatch(clearRooms()),
-    exitRoom: (username, roomId) => dispatch(exitRoom(username, roomId))
+    exitRoom: (username, roomId) => dispatch(exitRoom(username, roomId)),
+    clearTrack: () => dispatch(clearTrack())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(RoomsPage);
