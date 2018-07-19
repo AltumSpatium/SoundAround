@@ -53,6 +53,8 @@ class Chat extends Component {
 
     onSendClick() {
         const { messageText } = this.state;
+        if (!messageText) return;
+        
         const message = {
             content: { contentType: 'text', data: messageText },
             date: new Date()

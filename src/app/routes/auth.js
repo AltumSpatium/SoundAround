@@ -19,13 +19,8 @@ const signup = async (req, res) => {
     if (!validate(username, /^\w+$/) || !validate(password, /^\w{8,}$/)) {
         return res.status(400).json({ message: 'Username/password is incorrect' });
     }
-
-    //const userByEmail = User.findOne({ email: req.body.email });
-    const userByUsername = User.findOne({ username });
     
-    //if (await userByEmail !== null) {
-    //    return res.status(409).json({ message: 'Email is already taken' });
-    //}
+    const userByUsername = User.findOne({ username });
     if (await userByUsername !== null) {
         return res.status(409).json({ message: 'Username is already taken' });
     }

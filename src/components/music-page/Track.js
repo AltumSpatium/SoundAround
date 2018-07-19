@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { List, Icon } from 'antd';
 import { connect } from 'react-redux';
 import {
-    setVisibility, setPlayerPlaylist, clearPlayerPlaylist
+    setVisibility, setPlayerPlaylist, clearPlayerPlaylist, sendCommand
 } from '../../actions/player';
 import { beautifyDuration, createPicture } from '../../util/trackUtil';
 
@@ -28,7 +28,7 @@ class Track extends Component {
     playTrack() {
         const {
             track, setPlayerPlaylist, setVisibility,
-            clearPlayerPlaylist, tracks
+            clearPlayerPlaylist, tracks, sendCommand
         } = this.props;
         clearPlayerPlaylist();
 
@@ -37,7 +37,14 @@ class Track extends Component {
 
         setVisibility(true);
         const playlist = { id: 'tracks', tracks: playlistTracks, startIndex };
-        setPlayerPlaylist(playlist);
+        sendCommand([{
+            type: 'SET_PLAYLIST',
+            data: playlist
+        }, {
+            type: 'PLAY'
+        }]);
+
+        //setPlayerPlaylist(playlist);
     }
 
     render() {
@@ -106,7 +113,8 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
     setVisibility: visible => dispatch(setVisibility(visible)),
     setPlayerPlaylist: playlist => dispatch(setPlayerPlaylist(playlist)),
-    clearPlayerPlaylist: () => dispatch(clearPlayerPlaylist())
+    clearPlayerPlaylist: () => dispatch(clearPlayerPlaylist()),
+    sendCommand: command => dispatch(sendCommand(command))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Track);

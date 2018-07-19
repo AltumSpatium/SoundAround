@@ -34,48 +34,58 @@ const user = (state=initialState, action) => {
         case UPDATE_USER_FAIL:
         case DELETE_USER_FAIL:
             return { ...state, isFetching: false };
-        case CREATE_PLAYLIST_SUCCESS:
-            const userCreatedPlaylist = { ...state.currentUser };
-            userCreatedPlaylist.playlists.push(action.payload);
-            return { ...state, currentUser: userCreatedPlaylist };
-        case UPLOAD_TRACK_SUCCESS:
-            const userUploadedTrack = { ...state.currentUser };
-            userUploadedTrack.tracks.push(action.payload);
-            return { ...state, currentUser: userUploadedTrack };
-        case DELETE_PLAYLIST_SUCCESS:
-            const userDeletedPlaylist = { ...state.currentUser };
-            const deletedPlaylistIndex = userDeletedPlaylist.playlists.indexOf(action.payload);
-            userDeletedPlaylist.playlists.splice(deletedPlaylistIndex, 1);
-            return { ...state, currentUser: userDeletedPlaylist };
-        case CREATE_ROOM_SUCCESS:
-            const userCreatedRoom = { ...state.currentUser };
-            userCreatedRoom.rooms.push(action.payload);
-            return { ...state, currentUser: userCreatedRoom };
-        case DELETE_TRACK_SUCCESS:
-            const userDeletedTrack = { ...state.currentUser };
-            userDeletedTrack.tracks.splice(userDeletedTrack.tracks.indexOf(action.payload), 1);
-            return { ...state, currentUser: userDeletedTrack };
-        case USER_ENTERED_ROOM:
-            const userEnteredRoom = { ...state.currentUser };
-            userEnteredRoom.currentRoom = action.payload.roomId;
-            return { ...state, currentUser: userEnteredRoom };
-        case USER_EXITED_ROOM:
-            const userExitedRoom = { ...state.currentUser };
-            userExitedRoom.currentRoom = null;
-            return { ...state, currentUser: userExitedRoom };
-        case KICK_USER:
-            const userKick = { ...state.currentUser };
-            if (userKick.username !== action.payload) return state;
-            userKick.currentRoom = null;
-            return { ...state, currentUser: userKick };
-        case ADD_TRACK:
-            const userAddTrack = { ...state.currentUser };
-            userAddTrack.tracks.push(action.payload);
-            return { ...state, currentUser: userAddTrack };
-        case ADD_PLAYLIST:
-            const userAddPlaylist = { ...state.currentUser };
-            userAddPlaylist.playlists.push(action.payload);
-            return { ...state, currentUser: userAddPlaylist };
+        case CREATE_PLAYLIST_SUCCESS: {
+            const currentUser = { ...state.currentUser };
+            currentUser.playlists.push(action.payload);
+            return { ...state, currentUser };
+        }
+        case UPLOAD_TRACK_SUCCESS: {
+            const currentUser = { ...state.currentUser };
+            currentUser.tracks.push(action.payload);
+            return { ...state, currentUser };
+        }
+        case DELETE_PLAYLIST_SUCCESS: {
+            const currentUser = { ...state.currentUser };
+            const deletedPlaylistIndex = currentUser.playlists.indexOf(action.payload);
+            currentUser.playlists.splice(deletedPlaylistIndex, 1);
+            return { ...state, currentUser };
+        }
+        case CREATE_ROOM_SUCCESS: {
+            const currentUser = { ...state.currentUser };
+            currentUser.rooms.push(action.payload);
+            return { ...state, currentUser };
+        }
+        case DELETE_TRACK_SUCCESS: {
+            const currentUser = { ...state.currentUser };
+            currentUser.tracks.splice(currentUser.tracks.indexOf(action.payload), 1);
+            return { ...state, currentUser };
+        }
+        case USER_ENTERED_ROOM: {
+            const currentUser = { ...state.currentUser };
+            currentUser.currentRoom = action.payload.roomId;
+            return { ...state, currentUser };
+        }
+        case USER_EXITED_ROOM: {
+            const currentUser = { ...state.currentUser };
+            currentUser.currentRoom = null;
+            return { ...state, currentUser };
+        }
+        case KICK_USER: {
+            const currentUser = { ...state.currentUser };
+            if (currentUser.username !== action.payload) return state;
+            currentUser.currentRoom = null;
+            return { ...state, currentUser };
+        }
+        case ADD_TRACK: {
+            const currentUser = { ...state.currentUser };
+            currentUser.tracks.push(action.payload);
+            return { ...state, currentUser };
+        }
+        case ADD_PLAYLIST: {
+            const currentUser = { ...state.currentUser };
+            currentUser.playlists.push(action.payload);
+            return { ...state, currentUser };
+        }
         default:
             return state;
     }

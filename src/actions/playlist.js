@@ -8,7 +8,7 @@ import {
     CLEAR_PLAYLIST, CLEAR_PLAYLIST_PAGE, SET_PLAYLIST_TRACKLIST, ADD_PLAYLIST
 } from '../constants/playlist';
 import {
-    request, success, fail, callAPI
+    request, success, fail, callAPI, createAction
 } from './default';
 import { toastr } from 'react-redux-toastr';
 
@@ -133,19 +133,13 @@ export const deletePlaylist = (username, playlistId) => {
 };
 
 const clearPlaylistRequest = request(CLEAR_PLAYLIST);
-
-export const clearPlaylist = () => async dispatch => dispatch(clearPlaylistRequest());
+export const clearPlaylist = createAction(clearPlaylistRequest);
 
 const clearPlaylistPageRequest = request(CLEAR_PLAYLIST_PAGE);
-
-export const clearPlaylistPage = () => async dispatch => dispatch(clearPlaylistPageRequest());
+export const clearPlaylistPage = createAction(clearPlaylistPageRequest);
 
 const setPlaylistTracklistSuccess = success(SET_PLAYLIST_TRACKLIST);
-
-export const setPlaylistTracklist = tracklist => dispatch => {
-    return dispatch(setPlaylistTracklistSuccess(tracklist));
-};
+export const setPlaylistTracklist = createAction(setPlaylistTracklistSuccess);
 
 const addPlaylistSuccess = success(ADD_PLAYLIST);
-
-export const addPlaylist = playlistId => async dispatch => dispatch(addPlaylistSuccess(playlistId));
+export const addPlaylist = createAction(addPlaylistSuccess);

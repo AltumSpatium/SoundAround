@@ -1,7 +1,8 @@
 import {
     SET_PLAYER_PLAYLIST, SET_VISIBILITY, CLEAR_PLAYER_PLAYLIST,
     SET_NOW_PLAYING, CLEAR_PLAYER_TRACK,
-    GET_PLAYER_TRACK_SUCCESS
+    GET_PLAYER_TRACK_SUCCESS,
+    SEND_COMMAND, RECEIVE_COMMAND
 } from '../constants/player';
 
 const initialState = {
@@ -10,7 +11,12 @@ const initialState = {
     nowPlaying: null,
 
     track: null,
-    trackFilename: null
+    trackFilename: null,
+
+    command: {},
+    commandReceived: false,
+
+    disabled: false
 };
 
 const player = (state=initialState, action) => {
@@ -28,6 +34,12 @@ const player = (state=initialState, action) => {
             return { ...state, track, trackFilename };
         case CLEAR_PLAYER_TRACK:
             return { ...state, track: null, trackFilename: null };
+        case SEND_COMMAND: {
+            const command = action.payload;
+            return { ...state, command, commandReceived: true };
+        }
+        case RECEIVE_COMMAND:
+            return { ...state, command: {}, commandReceived: false };
         default:
             return state;
     }

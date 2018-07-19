@@ -46,5 +46,5 @@ export const register = userData =>
 
 export const logout = () => async dispatch => {
     localStorage.removeItem('sa_token');
-    dispatch(logoutRequest());
+    return dispatch(logoutRequest());
 };

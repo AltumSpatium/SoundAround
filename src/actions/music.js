@@ -7,7 +7,7 @@ import {
     CLEAR_MUSIC_LIST, SET_MUSIC_TRACKLIST, ADD_TRACK, CLEAR_TRACK
 } from '../constants/music';
 import {
-    request, success, fail, callAPI
+    request, success, fail, callAPI, createAction
 } from './default';
 import { toastr } from 'react-redux-toastr';
 
@@ -49,16 +49,10 @@ export const getTrack = (trackId, onlyInfo) => {
 };
 
 const clearMusicListRequest = request(CLEAR_MUSIC_LIST);
-
-export const clearMusicList = () => async dispatch => {
-    return await dispatch(clearMusicListRequest());
-};
+export const clearMusicList = createAction(clearMusicListRequest);
 
 const clearTrackRequest = request(CLEAR_TRACK);
-
-export const clearTrack = () => async dispatch => {
-    return await dispatch(clearTrackRequest());
-};
+export const clearTrack = createAction(clearTrackRequest);
 
 const uploadTrackRequest = request(UPLOAD_TRACK_REQUEST);
 const uploadTrackSuccess = success(UPLOAD_TRACK_SUCCESS);
@@ -129,11 +123,7 @@ export const deleteTrack = (trackId, username) => {
 };
 
 const setMusicTracklistSuccess = success(SET_MUSIC_TRACKLIST);
-
-export const setMusicTracklist = tracklist => dispatch => {
-    return dispatch(setMusicTracklistSuccess(tracklist));
-};
+export const setMusicTracklist = createAction(setMusicTracklistSuccess);
 
 const addTrackSuccess = success(ADD_TRACK);
-
-export const addTrack = trackId => async dispatch => dispatch(addTrackSuccess(trackId));
+export const addTrack = createAction(addTrackSuccess);

@@ -1,27 +1,24 @@
 import {
     SET_PLAYER_PLAYLIST, SET_VISIBILITY, CLEAR_PLAYER_PLAYLIST,
     SET_NOW_PLAYING, CLEAR_PLAYER_TRACK,
-    GET_PLAYER_TRACK_REQUEST, GET_PLAYER_TRACK_SUCCESS, GET_PLAYER_TRACK_FAIL
+    GET_PLAYER_TRACK_REQUEST, GET_PLAYER_TRACK_SUCCESS, GET_PLAYER_TRACK_FAIL,
+    SEND_COMMAND, RECEIVE_COMMAND
 } from '../constants/player';
 import {
-    request, success, fail, callAPI
+    request, success, fail, callAPI, createAction
 } from './default';
 
 const setVisibilitySuccess = success(SET_VISIBILITY);
-
-export const setVisibility = visible => async dispatch => dispatch(setVisibilitySuccess(visible));
+export const setVisibility = createAction(setVisibilitySuccess);
 
 const setPlayerPlaylistSuccess = success(SET_PLAYER_PLAYLIST);
-
-export const setPlayerPlaylist = playlist => async dispatch => dispatch(setPlayerPlaylistSuccess(playlist));
+export const setPlayerPlaylist = createAction(setPlayerPlaylistSuccess);
 
 const clearPlayerPlaylistRequest = request(CLEAR_PLAYER_PLAYLIST);
-
-export const clearPlayerPlaylist = () => async dispatch => dispatch(clearPlayerPlaylistRequest());
+export const clearPlayerPlaylist = createAction(clearPlayerPlaylistRequest);
 
 const setNowPlayingSuccess = success(SET_NOW_PLAYING);
-
-export const setNowPlaying = trackId => async dispatch => dispatch(setNowPlayingSuccess(trackId));
+export const setNowPlaying = createAction(setNowPlayingSuccess);
 
 const getPlayerTrackRequest = request(GET_PLAYER_TRACK_REQUEST);
 const getPlayerTrackSuccess = success(GET_PLAYER_TRACK_SUCCESS);
@@ -42,5 +39,10 @@ export const getPlayerTrack = trackId => {
 };
 
 const clearPlayerRequest = request(CLEAR_PLAYER_TRACK);
+export const clearPlayerTrack = createAction(clearPlayerRequest);
 
-export const clearPlayerTrack = () => async dispatch => dispatch(clearPlayerRequest());
+const sendCommandSuccess = success(SEND_COMMAND);
+export const sendCommand = createAction(sendCommandSuccess);
+
+const receiveCommandRequest = request(RECEIVE_COMMAND);
+export const receiveCommand = createAction(receiveCommandRequest);

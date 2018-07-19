@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Form, Input, Button } from 'antd';
 
 import '../../styles/AuthPanel.css';
@@ -154,5 +155,17 @@ class AuthPanel extends Component {
         );
     }
 }
+
+AuthPanel.propTypes = {
+    headerContent: PropTypes.object,
+    footerContent: PropTypes.object,
+    submitText: PropTypes.string,
+    options: PropTypes.shape({
+        fields: PropTypes.arrayOf(PropTypes.string)
+    }),
+    isFetching: PropTypes.bool,
+    onSubmit: PropTypes.func,
+    onChange: PropTypes.func
+};
 
 export default Form.create()(AuthPanel);

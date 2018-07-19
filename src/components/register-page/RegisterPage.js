@@ -12,7 +12,6 @@ class RegisterPage extends Component {
         super(props);
 
         this.state = {
-            email: '',
             username: '',
             password: ''
         };
@@ -35,7 +34,7 @@ class RegisterPage extends Component {
 
     render() {
         const options = {
-            fields: ['username', /*'email',*/ 'password'],
+            fields: ['username', 'password'],
             confirmPassword: true
         };
 

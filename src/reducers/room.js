@@ -31,10 +31,11 @@ const room = (state=initialState, action) => {
     switch (action.type) {
         case GET_ROOMS_REQUEST:
             return { ...state, loading: true };
-        case GET_ROOMS_SUCCESS:
+        case GET_ROOMS_SUCCESS: {
             const roomsPage = action.payload;
-            const rooms = state.rooms.slice().concat(roomsPage);
+            const rooms = state.rooms.concat(roomsPage);
             return { ...state, loading: false, rooms, hasMore: !!roomsPage.length };
+        }
         case GET_ROOMS_FAIL:
             return { ...state, loading: false, hasMore: false };
         case GET_ROOM_REQUEST:
@@ -51,48 +52,52 @@ const room = (state=initialState, action) => {
             return { ...state, creatingRoom: false };
         case DELETE_ROOM_REQUEST:
             return state;
-        case DELETE_ROOM_SUCCESS:
-            const roomsDelete = state.rooms.slice();
-            const roomIndex = roomsDelete.map(room => room._id).indexOf(action.payload);
-            roomsDelete.splice(roomIndex, 1);
-            return { ...state, rooms: roomsDelete };
+        case DELETE_ROOM_SUCCESS: {
+            const rooms = Array.from(state.rooms);
+            const roomIndex = rooms.map(room => room._id).indexOf(action.payload);
+            rooms.splice(roomIndex, 1);
+            return { ...state, rooms };
+        }
         case DELETE_ROOM_FAIL:
             return state;
         case CLEAR_ROOMS:
-            return initialState;
+            return { ...initialState };
         case GET_ROOM_PLAYLIST_REQUEST:
             return { ...state, loadingRoomPlaylistTracks: true };
         case GET_ROOM_PLAYLIST_SUCCESS:
             return { ...state, loadingRoomPlaylistTracks: false, roomPlaylistTracks: action.payload };
         case GET_ROOM_PLAYLIST_FAIL:
             return { ...state, loadingRoomPlaylistTracks: false };
-        case USER_ENTERED_ROOM:
-            const roomEnter = { ...state.room };
-            if (roomEnter.usersOnline) roomEnter.usersOnline.push(action.payload.username);
-            return { ...state, room: roomEnter };
-        case USER_EXITED_ROOM:
+        case USER_ENTERED_ROOM: {
+            const room = { ...state.room };
+            if (room.usersOnline) room.usersOnline.push(action.payload.username);
+            return { ...state, room };
+        }
+        case USER_EXITED_ROOM: {
             if (!state.room) return state;
-            const roomExit = { ...state.room };
-            if (roomExit.usersOnline) roomExit.usersOnline.splice(roomExit.usersOnline.indexOf(action.payload.username), 1);
-            return { ...state, room: roomExit };
-        case RECEIVE_MESSAGE:
-            const roomMsg = { ...state.room };
-            if (roomMsg.messages) roomMsg.messages.push(action.payload);
-            return { ...state, room: roomMsg };
-        case KICK_USER:
-            const roomKick = { ...state.room };
-            if (roomKick.usersOnline) roomKick.usersOnline.splice(roomKick.usersOnline.indexOf(action.payload), 1);
-            return { ...state, room: roomKick };
+            const room = { ...state.room };
+            if (room.usersOnline) room.usersOnline.splice(room.usersOnline.indexOf(action.payload.username), 1);
+            return { ...state, room };
+        }
+        case RECEIVE_MESSAGE: {
+            const room = { ...state.room };
+            if (room.messages) room.messages.push(action.payload);
+            return { ...state, room };
+        }
+        case KICK_USER: {
+            const room = { ...state.room };
+            if (room.usersOnline) room.usersOnline.splice(room.usersOnline.indexOf(action.payload), 1);
+            return { ...state, room };
+        }
         case UPDATE_ROOM:
             return { ...state, room: action.payload };
         case CLEAR_PLAYLIST:
             return { ...state, roomPlaylistTracks: [], loadingRoomPlaylistTracks: false };
-        case SET_ROOM_NOW_PLAYING:
-            const roomNowPlaying = { ...state.room };
-            console.log(roomNowPlaying.nowPlaying);
-            console.log(action.payload);
-            roomNowPlaying.nowPlaying = action.payload;
-            return { ...state, room: roomNowPlaying };
+        case SET_ROOM_NOW_PLAYING: {
+            const room = { ...state.room };
+            room.nowPlaying = action.payload;
+            return { ...state, room };
+        }
         default:
             return state;
     }

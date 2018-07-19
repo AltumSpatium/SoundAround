@@ -2,121 +2,20 @@ import React, { Component } from 'react';
 import { Icon, Slider } from 'antd';
 import {
     getPlayerTrack, setNowPlaying, clearPlayerPlaylist, setVisibility,
-    clearPlayerTrack
+    clearPlayerTrack, receiveCommand
 } from '../../actions/player';
 import { connect } from 'react-redux';
-import { Howl, Howler } from 'howler';
+import Player from '../../util/Player';
 import { beautifyDuration } from '../../util/trackUtil';
 import * as GoUnmute from 'react-icons/lib/go/unmute';
 import * as GoMute from 'react-icons/lib/go/mute';
 
-class Player {
-    constructor(playlist={}, updateProgress) {
-        this.playlist = playlist;
-        this.updateProgress = updateProgress;
-
-        if (playlist.tracks) {
-            this.tracks = this.initPlaylist(playlist);
-        }
-
-        this.currentIndex = this.playlist.startIndex || 0;
-        this.isPlaying = false;
-    }
-
-    initPlaylist(playlist) {
-        const self = this;
-        return playlist.tracks.map(track => new Howl({
-            src: [track.src],
-            html5: true, 
-            onplay: () => {
-                requestAnimationFrame(self.step.bind(self));
-            },
-            onloaderror: function() {
-            }
-        }));
-    }
-
-    step() {
-        const self = this;
-        const trackHowl = self.tracks[self.currentIndex];
-        const seek = trackHowl.seek() || 0;
-        const percent = (((seek / trackHowl.duration()) * 100) || 0);
-        self.updateProgress(seek, percent);
-
-        if (trackHowl.playing()) {
-            requestAnimationFrame(self.step.bind(self));
-        }
-    }
-
-    stop() {
-        const trackHowl = this.tracks[this.currentIndex];
-        trackHowl.stop();
-    }
-
-    setPlaylist(playlist) {
-        if (this.isPlaying) {
-            this.tracks[this.currentIndex].stop();
-        }
-
-        this.playlist = playlist;
-        if (playlist.tracks) {
-            this.tracks = this.initPlaylist(playlist);
-        }
-
-        this.currentIndex = this.playlist.startIndex || 0;
-    }
-
-    play(index) {
-        if (this.isPlaying) {
-            this.tracks[this.currentIndex].stop();
-        }
-
-        if (index !== undefined) this.currentIndex = index;
-        const trackHowl = this.tracks[this.currentIndex];
-        trackHowl.play();
-        this.isPlaying = true;
-        return this.playlist.tracks[this.currentIndex].id;
-    }
-
-    pause() {
-        const trackHowl = this.tracks[this.currentIndex];
-        trackHowl.pause();
-        this.isPlaying = false;
-    }
-
-    seek(percent) {
-        const trackHowl = this.tracks[this.currentIndex];
-        if (trackHowl.playing()) {
-            trackHowl.seek(trackHowl.duration() * percent / 100);
-        }
-    }
-
-    volume(value) {
-        Howler.volume(value);
-    }
-
-    prev() {
-        return this.skipTo(this.currentIndex - 1);
-    }
-
-    next() {
-        return this.skipTo(this.currentIndex + 1);
-    }
-
-    skipTo(index) {
-        if (this.isPlaying) {
-            this.tracks[this.currentIndex].stop();
-        }
-
-        if (index < 0) index = 0;
-        if (index >= this.tracks.length) index = this.tracks.length - 1;
-        return this.play(index);
-    }
-}
-
 class MusicPlayer extends Component {
     constructor(props) {
         super(props);
+
+        const volume = localStorage.getItem('sa-volume');
+        const muted = localStorage.getItem('sa-muted');
 
         this.state = {
             track: null,
@@ -127,10 +26,13 @@ class MusicPlayer extends Component {
 
             preventUpdate: false,
 
-            volume: 100,
-            muted: false
+            volume: volume ? parseInt(volume) : 100,
+            muted: muted ? JSON.parse(muted) : false
         };
 
+        this.createPlaylist = this.createPlaylist.bind(this);
+        this.handleCommand = this.handleCommand.bind(this);
+        this._handleCommand = this._handleCommand.bind(this);
         this.play = this.play.bind(this);
         this.pause = this.pause.bind(this);
         this.prev = this.prev.bind(this);
@@ -144,7 +46,10 @@ class MusicPlayer extends Component {
         this.onAfterChange = this.onAfterChange.bind(this);
         this.setNowPlaying = this.setNowPlaying.bind(this);
 
-        this.player = new Player({}, this.updateProgress);
+        this.player = new Player({
+            onProgress: this.updateProgress
+        });
+        this.player.volume(this.state.volume / 100);
     }
 
     play(index) {
@@ -165,11 +70,13 @@ class MusicPlayer extends Component {
 
     prev() {
         const trackId = this.player.prev();
+        this.setState({ playing: true });
         this.setNowPlaying(trackId);
     }
 
     next() {
         const trackId = this.player.next();
+        this.setState({ playing: true });
         this.setNowPlaying(trackId);
     }
 
@@ -207,84 +114,119 @@ class MusicPlayer extends Component {
         } else this.setState({ volume: value, muted: false });
 
         this.player.volume(value / 100);
+        localStorage.setItem('sa-volume', value);
     }
 
     toggleMute() {
         const { muted, volume } = this.state;
 
-        if (!muted) {
-            this.player.volume(0);
-        } else this.player.volume(volume / 100);
+        const newVolume = muted ? volume : 0;
+        this.player.volume(newVolume / 100);
+        localStorage.setItem('sa-muted', !muted);
 
         this.setState({ muted: !muted });
     }
 
+    async createPlaylist(playerPlaylist) {
+        const { tracks, id, startIndex } = playerPlaylist;
+        const startTrackId = tracks[startIndex];
+        const playlist = {
+            id, startIndex,
+            tracks: []
+        };
+
+        const cachedTracks = [];
+        for (const trackId of tracks) {
+            await this.props.getTrack(trackId);
+            if (trackId === startTrackId) {
+                this.setState({ track: this.props.track });
+            }
+
+            cachedTracks.push(this.props.track);
+            playlist.tracks.push({
+                id: trackId,
+                src: this.props.trackFilename
+            });
+        }
+
+        this.setState({ tracks: cachedTracks });
+        return playlist;
+    }
+
+    async _handleCommand(command) {
+        switch (command.type) {
+            case 'SET_PLAYLIST': {
+                if (this.player.playlist.id !== command.data.id) {
+                    const playlist = await this.createPlaylist(command.data);
+                    this.player.playlist = playlist;
+                } else {
+                    this.player.playlist = { ...this.player.playlist, startIndex: command.data.startIndex };
+                }
+                break;
+            }
+            case 'PLAY': {
+                const playlist = this.player.playlist;
+                if (playlist.id) {
+                    const startTrackId = playlist.tracks[playlist.startIndex].id;
+                    this.setNowPlaying(startTrackId);
+                    this.play(playlist.startIndex);
+                    break;
+                }
+            }
+            case 'PAUSE': {
+                this.pause();
+                break;
+            }
+            case 'STOP': {
+                this.stop();
+                break;
+            }
+            case 'PREV': {
+                this.prev();
+                break;
+            }
+            case 'NEXT': {
+                this.next();
+                break;
+            }
+        }
+    }
+
+    async handleCommand(input) {
+        if (Array.isArray(input)) {
+            for (const command of input) {
+                await this._handleCommand(command);
+            }
+        } else await this._handleCommand(input);
+
+        this.props.receiveCommand();
+    }
+
     async componentWillReceiveProps(nextProps) {
-        if (!this.props.playerPlaylist && nextProps.playerPlaylist) {
-            const tracks = nextProps.playerPlaylist.tracks;
-            const startTrackId = tracks[nextProps.playerPlaylist.startIndex];
-            const playlist = {
-                id: nextProps.playerPlaylist.id,
-                startIndex: nextProps.playerPlaylist.startIndex,
-                tracks: []
-            };
+        // if (!this.props.playerPlaylist && nextProps.playerPlaylist) {
+        //     const [playlist, startTrackId] = await this.createPlaylist(nextProps.playerPlaylist);
+        //     this.player.playlist = playlist;
+        //     //this.play(nextProps.playerPlaylist.startIndex);
+        //     //this.props.setNowPlaying(startTrackId);
+        // }
 
-            const cachedTracks = [];
-            for (let trackId of tracks) {
-                await this.props.getTrack(trackId);
-                if (trackId === startTrackId) {
-                    this.setState({ track: this.props.track });
-                }
+        // Replace with 'command' functionality
+        // if (this.props.playerPlaylist && nextProps.playerPlaylist &&
+        //     this.props.playerPlaylist.id !== nextProps.playerPlaylist.id) {
+        //     const [playlist, startTrackId] = await this.createPlaylist(nextProps.playerPlaylist);
+        //     this.player.playlist = playlist;
+        //     //this.play(nextProps.playerPlaylist.startIndex);
+        //     //this.props.setNowPlaying(startTrackId);
+        // }
 
-                cachedTracks.push(this.props.track);
-                playlist.tracks.push({
-                    id: trackId,
-                    src: this.props.trackFilename
-                });
-            }
+        // if (this.props.playerPlaylist && nextProps.playerPlaylist &&
+        //     this.props.playerPlaylist.startIndex !== nextProps.playerPlaylist.startIndex) {
+        //     //const trackId = this.play(nextProps.playerPlaylist.startIndex);
+        //     //this.setNowPlaying(trackId);
+        // }
 
-            this.setState({ tracks: cachedTracks });
-
-            this.player.setPlaylist(playlist);
-            this.play(nextProps.playerPlaylist.startIndex);
-            this.props.setNowPlaying(startTrackId);
-        }
-
-        if (this.props.playerPlaylist && nextProps.playerPlaylist &&
-            this.props.playerPlaylist.id !== nextProps.playerPlaylist.id) {
-            const tracks = nextProps.playerPlaylist.tracks;
-            const startTrackId = tracks[nextProps.playerPlaylist.startIndex];
-            const playlist = {
-                id: nextProps.playerPlaylist.id,
-                startIndex: nextProps.playerPlaylist.startIndex,
-                tracks: []
-            };
-
-            const cachedTracks = [];
-            for (let trackId of tracks) {
-                await this.props.getTrack(trackId);
-                if (trackId === startTrackId) {
-                    this.setState({ track: this.props.track });
-                }
-
-                cachedTracks.push(this.props.track);
-                playlist.tracks.push({
-                    id: trackId,
-                    src: this.props.trackFilename
-                });
-            }
-
-            this.setState({ tracks: cachedTracks });
-
-            this.player.setPlaylist(playlist);
-            this.play(nextProps.playerPlaylist.startIndex);
-            this.props.setNowPlaying(startTrackId);
-        }
-
-        if (this.props.playerPlaylist && nextProps.playerPlaylist &&
-            this.props.playerPlaylist.startIndex !== nextProps.playerPlaylist.startIndex) {
-            const trackId = this.play(nextProps.playerPlaylist.startIndex);
-            this.setNowPlaying(trackId);
+        if (!this.props.commandReceived && nextProps.commandReceived) {
+            this.handleCommand(nextProps.command);
         }
 
         if (nextProps.visible) {
@@ -346,7 +288,9 @@ const mapStateToProps = state => ({
     visible: state.player.visible,
     playerPlaylist: state.player.playerPlaylist,
     track: state.player.track,
-    trackFilename: state.player.trackFilename
+    trackFilename: state.player.trackFilename,
+    command: state.player.command,
+    commandReceived: state.player.commandReceived
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -354,7 +298,8 @@ const mapDispatchToProps = dispatch => ({
     setNowPlaying: trackId => dispatch(setNowPlaying(trackId)),
     clearPlayerPlaylist: () => dispatch(clearPlayerPlaylist()),
     setVisibility: visible => dispatch(setVisibility(visible)),
-    clearPlayerTrack: () => dispatch(clearPlayerTrack())
+    clearPlayerTrack: () => dispatch(clearPlayerTrack()),
+    receiveCommand: () => dispatch(receiveCommand())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(MusicPlayer);

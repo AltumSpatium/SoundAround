@@ -15,7 +15,8 @@ import {
     getPlaylist, clearPlaylist, getPlaylists, addPlaylist
 } from '../../actions/playlist';
 import {
-    setVisibility, setPlayerPlaylist, clearPlayerPlaylist
+    setVisibility, setPlayerPlaylist, clearPlayerPlaylist,
+    sendCommand
 } from '../../actions/player';
 import { clearMusicList, getMusicPage, addTrack } from '../../actions/music';
 import { showMessage } from '../../util/toastrUtil';
@@ -108,19 +109,22 @@ class CurrentRoomPage extends Component {
         this.io.on('playTrack', ({ trackId, startIndex }) => {
             const {
                 setPlayerPlaylist, setVisibility, setRoomNowPlaying,
-                clearPlayerPlaylist, playlistTracks, roomPlaylist
+                clearPlayerPlaylist, playlistTracks, roomPlaylist,
+                sendCommand
             } = this.props;
             clearPlayerPlaylist();
     
             const tracks = playlistTracks.map(t => t._id);
             
-            setVisibility(true);
+            // setVisibility(true);
             const playlist = { id: roomPlaylist._id, tracks, startIndex };
-            setPlayerPlaylist(playlist);
-            setRoomNowPlaying(trackId);
-        });
-
-        
+            // setPlayerPlaylist(playlist);
+            // sendCommand({
+            //     type: 'play',
+            //     data: { startIndex, startTrackId: tracks[startIndex] }
+            // });
+            // setRoomNowPlaying(trackId);
+        });        
     }
 
     exitRoom() {
@@ -281,7 +285,8 @@ const mapDispatchToProps = dispatch => ({
     setVisibility: visible => dispatch(setVisibility(visible)),
     setPlayerPlaylist: playlist => dispatch(setPlayerPlaylist(playlist)),
     clearPlayerPlaylist: () => dispatch(clearPlayerPlaylist()),
-    setRoomNowPlaying: trackId => dispatch(setRoomNowPlaying(trackId))
+    setRoomNowPlaying: trackId => dispatch(setRoomNowPlaying(trackId)),
+    sendCommand: command => dispatch(sendCommand(command))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(CurrentRoomPage);

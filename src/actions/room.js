@@ -9,7 +9,7 @@ import {
     USER_ENTERED_ROOM, USER_EXITED_ROOM, RECEIVE_MESSAGE, KICK_USER
 } from '../constants/room';
 import {
-    request, success, fail, callAPI
+    request, success, fail, callAPI, createAction
 } from './default';
 import { toastr } from 'react-redux-toastr';
 
@@ -109,23 +109,22 @@ export const getRoomPlaylist = (roomId, playlistId, userId) => {
 };
 
 const clearRoomsRequest = request(CLEAR_ROOMS);
-
-export const clearRooms = () => async dispatch => dispatch(clearRoomsRequest());
+export const clearRooms = createAction(clearRoomsRequest);
 
 const userEnteredRoomSuccess = success(USER_ENTERED_ROOM);
-const userExitedRoomSuccess = success(USER_EXITED_ROOM);
+export const enterRoom = createAction(userEnteredRoomSuccess, ['username', 'roomId']);
 
-export const enterRoom = (username, roomId) => async dispatch => dispatch(userEnteredRoomSuccess({ username, roomId }));
-export const exitRoom = (username, roomId) => async dispatch => dispatch(userExitedRoomSuccess({ username, roomId }));
+const userExitedRoomSuccess = success(USER_EXITED_ROOM);
+export const exitRoom = createAction(userExitedRoomSuccess, ['username', 'roomId']);
 
 const receiveMessageSuccess = success(RECEIVE_MESSAGE);
-
-export const receiveMessage = message => async dispatch => dispatch(receiveMessageSuccess(message));
+export const receiveMessage = createAction(receiveMessageSuccess);
 
 const kickUserSuccess = success(KICK_USER);
-const updateRoomSuccess = success(UPDATE_ROOM);
-const setRoomNowPlayingSuccess = success(SET_ROOM_NOW_PLAYING);
+export const kickUser = createAction(kickUserSuccess);
 
-export const kickUser = username => async dispatch => dispatch(kickUserSuccess(username));
-export const updateRoom = updatedRoom => async dispatch => dispatch(updateRoomSuccess(updatedRoom));
-export const setRoomNowPlaying = trackId => async dispatch => dispatch(setRoomNowPlayingSuccess(trackId));
+const updateRoomSuccess = success(UPDATE_ROOM);
+export const updateRoom = createAction(updateRoomSuccess);
+
+const setRoomNowPlayingSuccess = success(SET_ROOM_NOW_PLAYING);
+export const setRoomNowPlaying = createAction(setRoomNowPlayingSuccess);
